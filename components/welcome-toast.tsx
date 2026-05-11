@@ -8,7 +8,7 @@ export function WelcomeToast() {
     // ignore if screen height is too small
     if (window.innerHeight < 650) return;
     if (!document.cookie.includes("welcome-toast=2")) {
-      toast("🛍️ Welcome to Next.js Commerce!", {
+      toast("🛍️ Bienvenue chez Maison Atelier", {
         id: "welcome-toast",
         duration: Infinity,
         onDismiss: () => {
@@ -16,16 +16,10 @@ export function WelcomeToast() {
         },
         description: (
           <>
-            This is a high-performance, SSR storefront powered by Shopify,
-            Next.js, and Vercel.{" "}
-            <a
-              href="https://vercel.com/templates/next.js/nextjs-commerce"
-              className="text-blue-600 hover:underline"
-              target="_blank"
-            >
-              Deploy your own
+            Découvrez nos univers déco et mobilier en français.{" "}
+            <a href="/collections" className="text-blue-600 hover:underline">
+              Parcourir les collections
             </a>
-            .
           </>
         ),
       });

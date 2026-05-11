@@ -6,10 +6,15 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Fragment, Suspense, useEffect, useState } from "react";
 
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Menu } from "lib/shopify/types";
+import { megaMenuGroups } from "lib/storefront-content";
 import Search, { SearchSkeleton } from "./search";
 
-export default function MobileMenu({ menu }: { menu: Menu[] }) {
+const mobileQuickLinks = [
+  { title: "Nouveautés", path: "/search?sort=latest-desc" },
+  { title: "Toutes les collections", path: "/collections" },
+];
+
+export default function MobileMenu() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +39,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
     <>
       <button
         onClick={openMobileMenu}
-        aria-label="Open mobile menu"
+        aria-label="Ouvrir le menu mobile"
         className="flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors md:hidden dark:border-neutral-700 dark:text-white"
       >
         <Bars3Icon className="h-4" />
@@ -66,7 +71,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                 <button
                   className="mb-4 flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white"
                   onClick={closeMobileMenu}
-                  aria-label="Close mobile menu"
+                  aria-label="Fermer le menu mobile"
                 >
                   <XMarkIcon className="h-6" />
                 </button>
@@ -76,24 +81,53 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                     <Search />
                   </Suspense>
                 </div>
-                {menu.length ? (
-                  <ul className="flex w-full flex-col">
-                    {menu.map((item: Menu) => (
-                      <li
-                        className="py-2 text-xl text-black transition-colors hover:text-neutral-500 dark:text-white"
-                        key={item.title}
+                <ul className="mb-6 flex w-full flex-col border-b border-neutral-200 pb-4 dark:border-neutral-700">
+                  <li className="py-2 text-xl text-black transition-colors hover:text-neutral-500 dark:text-white">
+                    <Link href="/" prefetch={true} onClick={closeMobileMenu}>
+                      Accueil
+                    </Link>
+                  </li>
+                  {mobileQuickLinks.map((item) => (
+                    <li
+                      className="py-2 text-xl text-black transition-colors hover:text-neutral-500 dark:text-white"
+                      key={item.title}
+                    >
+                      <Link
+                        href={item.path}
+                        prefetch={true}
+                        onClick={closeMobileMenu}
                       >
-                        <Link
-                          href={item.path}
-                          prefetch={true}
-                          onClick={closeMobileMenu}
-                        >
-                          {item.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="space-y-6">
+                  {megaMenuGroups.map((group) => (
+                    <div key={group.title}>
+                      <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
+                        {group.title}
+                      </h3>
+                      <ul className="mt-2 space-y-2">
+                        {group.items.map((item) => (
+                          <li
+                            className="text-base text-black transition-colors hover:text-neutral-500 dark:text-white"
+                            key={item.href}
+                          >
+                            <Link
+                              href={item.href}
+                              prefetch={true}
+                              onClick={closeMobileMenu}
+                            >
+                              {item.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </Dialog.Panel>
           </Transition.Child>

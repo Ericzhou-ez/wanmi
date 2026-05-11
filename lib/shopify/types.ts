@@ -213,6 +213,19 @@ export type ShopifyCollectionProductsOperation = {
   };
 };
 
+export type ShopifyCollectionProductsByIdOperation = {
+  data: {
+    node: {
+      products: Connection<ShopifyProduct>;
+    } | null;
+  };
+  variables: {
+    id: string;
+    reverse?: boolean;
+    sortKey?: string;
+  };
+};
+
 export type ShopifyCollectionsOperation = {
   data: {
     collections: Connection<ShopifyCollection>;

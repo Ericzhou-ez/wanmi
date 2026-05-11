@@ -54,3 +54,24 @@ export const getCollectionProductsQuery = /* GraphQL */ `
   }
   ${productFragment}
 `;
+
+export const getCollectionProductsByIdQuery = /* GraphQL */ `
+  query getCollectionProductsById(
+    $id: ID!
+    $sortKey: ProductCollectionSortKeys
+    $reverse: Boolean
+  ) {
+    node(id: $id) {
+      ... on Collection {
+        products(sortKey: $sortKey, reverse: $reverse, first: 100) {
+          edges {
+            node {
+              ...product
+            }
+          }
+        }
+      }
+    }
+  }
+  ${productFragment}
+`;

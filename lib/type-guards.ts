@@ -1,19 +1,19 @@
 export interface ShopifyErrorLike {
-   status: number;
-   message: string;
-   cause?: unknown;
+  status: number;
+  message: string;
+  cause?: unknown;
 }
 
 export const isObject = (
-   object: unknown,
+  object: unknown,
 ): object is Record<string, unknown> => {
-   return (
-      typeof object === "object" && object !== null && !Array.isArray(object)
-   );
+  return (
+    typeof object === "object" && object !== null && !Array.isArray(object)
+  );
 };
 
 export const isShopifyError = (error: unknown): error is ShopifyErrorLike => {
-   if (!isObject(error)) return false;
+  if (!isObject(error)) return false;
 
-   return typeof error.status === "number" && typeof error.message === "string";
+  return typeof error.status === "number" && typeof error.message === "string";
 };

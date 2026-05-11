@@ -22,7 +22,7 @@ function SubmitButton({
   if (!availableForSale) {
     return (
       <button disabled className={clsx(buttonClasses, disabledClasses)}>
-        Out Of Stock
+        Rupture de stock
       </button>
     );
   }
@@ -30,21 +30,21 @@ function SubmitButton({
   if (!selectedVariantId) {
     return (
       <button
-        aria-label="Please select an option"
+        aria-label="Veuillez sélectionner une option"
         disabled
         className={clsx(buttonClasses, disabledClasses)}
       >
         <div className="absolute left-0 ml-4">
           <PlusIcon className="h-5" />
         </div>
-        Add To Cart
+        Ajouter au panier
       </button>
     );
   }
 
   return (
     <button
-      aria-label="Add to cart"
+      aria-label="Ajouter au panier"
       className={clsx(buttonClasses, {
         "hover:opacity-90": true,
       })}
@@ -52,7 +52,7 @@ function SubmitButton({
       <div className="absolute left-0 ml-4">
         <PlusIcon className="h-5" />
       </div>
-      Add To Cart
+      Ajouter au panier
     </button>
   );
 }

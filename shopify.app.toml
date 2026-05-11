@@ -1,0 +1,18 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "22633118594437d12ad909d9d25e9b35"
+application_url = "https://localhost/new-install"
+embedded = false
+name = "wanmi"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products,write_products"
+optional_scopes = [ ]
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [ "http://localhost" ]
+
+[webhooks]
+api_version = "2026-04"

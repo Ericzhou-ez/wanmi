@@ -1,6 +1,5 @@
 import { CartProvider } from "components/cart/cart-context";
 import { Navbar } from "components/layout/navbar";
-import { WelcomeToast } from "components/welcome-toast";
 import { getCart } from "lib/shopify";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
@@ -38,7 +37,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  width: 1024,
+  width: "device-width",
   initialScale: 1,
 };
 
@@ -58,7 +57,6 @@ export default async function RootLayout({
           <main>
             {children}
             <Toaster closeButton />
-            <WelcomeToast />
           </main>
         </CartProvider>
       </body>

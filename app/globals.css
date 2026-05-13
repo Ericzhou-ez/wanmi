@@ -1,45 +1,66 @@
 @import "tailwindcss";
+@import "phosphor-icons/src/css/icons.css";
 
 @plugin "@tailwindcss/container-queries";
 @plugin "@tailwindcss/typography";
 
 @layer base {
-  html,
-  body {
-    font-family: var(--font-manrope), system-ui, sans-serif;
-  }
+   html,
+   body {
+      font-family: var(--font-lora), ui-serif, Georgia, serif;
+      background: white;
+      color: var(--color-neutral-900, #171717);
+   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: var(--font-playfair), Georgia, serif;
-    letter-spacing: -0.015em;
-  }
+   h1,
+   h3 {
+      font-family: var(--font-lora), ui-serif, Georgia, serif;
+      letter-spacing: 0.005em;
+   }
 
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
+   h2,
+   h4,
+   p {
+      font-family: var(--font-roboto);
+      letter-spacing: 0.005em;
+   }
+
+   *,
+   ::after,
+   ::before,
+   ::backdrop,
+   ::file-selector-button {
+      border-color: var(--color-gray-200, currentColor);
+   }
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+@layer components {
+   .nav-menu-trigger {
+      font-family: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+   }
+
+   .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+   }
+
+   .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+   }
+}
+
+html {
+   color-scheme: light;
 }
 
 @supports (font: -apple-system-body) and (-webkit-appearance: none) {
-  img[loading="lazy"] {
-    clip-path: inset(0.6px);
-  }
+   img[loading="lazy"] {
+      clip-path: inset(0.6px);
+   }
 }
 
 a,
 input,
 button {
-  @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 dark:focus-visible:ring-neutral-600 dark:focus-visible:ring-offset-neutral-900;
+   @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50;
 }

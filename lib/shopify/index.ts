@@ -70,6 +70,19 @@ type ExtractVariables<T> = T extends { variables: object }
   ? T["variables"]
   : never;
 
+const toErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
+const logRecoverableShopifyFailure = (
+  context: string,
+  error: unknown,
+  fallbackLabel: string,
+) => {
+  console.warn(
+    `[shopify] ${context} failed (${toErrorMessage(error)}). Returning ${fallbackLabel}.`,
+  );
+};
+
 export async function shopifyFetch<T>({
   headers,
   query,
@@ -378,9 +391,10 @@ export async function getCollectionProducts({
       },
     });
   } catch (e) {
-    console.error(
-      `Shopify getCollectionProducts failed for '${collection}'. Returning empty list.`,
+    logRecoverableShopifyFailure(
+      `getCollectionProducts('${collection}')`,
       e,
+      "an empty list",
     );
     return [];
   }
@@ -426,9 +440,10 @@ export async function getCollectionProductsById({
       },
     });
   } catch (e) {
-    console.error(
-      `Shopify getCollectionProductsById failed for '${id}'. Returning empty list.`,
+    logRecoverableShopifyFailure(
+      `getCollectionProductsById('${id}')`,
       e,
+      "an empty list",
     );
     return [];
   }
@@ -463,9 +478,31 @@ export async function getCollections(): Promise<Collection[]> {
     ];
   }
 
-  const res = await shopifyFetch<ShopifyCollectionsOperation>({
-    query: getCollectionsQuery,
-  });
+  let res: { status: number; body: ShopifyCollectionsOperation };
+  try {
+    res = await shopifyFetch<ShopifyCollectionsOperation>({
+      query: getCollectionsQuery,
+    });
+  } catch (e) {
+    logRecoverableShopifyFailure(
+      "getCollections()",
+      e,
+      "the default collections",
+    );
+    return [
+      {
+        handle: "",
+        title: "Tout",
+        description: "Tous les produits",
+        seo: {
+          title: "Tout",
+          description: "Tous les produits",
+        },
+        path: "/search",
+        updatedAt: new Date().toISOString(),
+      },
+    ];
+  }
   const shopifyCollections = removeEdgesAndNodes(res.body?.data?.collections);
   const collections = [
     {
@@ -508,9 +545,10 @@ export async function getMenu(handle: string): Promise<Menu[]> {
       },
     });
   } catch (e) {
-    console.error(
-      `Shopify getMenu failed for '${handle}'. Returning empty menu.`,
+    logRecoverableShopifyFailure(
+      `getMenu('${handle}')`,
       e,
+      "an empty menu",
     );
     return [];
   }
@@ -553,12 +591,18 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
     return undefined;
   }
 
-  const res = await shopifyFetch<ShopifyProductOperation>({
-    query: getProductQuery,
-    variables: {
-      handle,
-    },
-  });
+  let res: { status: number; body: ShopifyProductOperation };
+  try {
+    res = await shopifyFetch<ShopifyProductOperation>({
+      query: getProductQuery,
+      variables: {
+        handle,
+      },
+    });
+  } catch (e) {
+    logRecoverableShopifyFailure(`getProduct('${handle}')`, e, "undefined");
+    return undefined;
+  }
 
   return reshapeProduct(res.body.data.product, false);
 }
@@ -570,12 +614,22 @@ export async function getProductRecommendations(
   cacheTag(TAGS.products);
   cacheLife("days");
 
-  const res = await shopifyFetch<ShopifyProductRecommendationsOperation>({
-    query: getProductRecommendationsQuery,
-    variables: {
-      productId,
-    },
-  });
+  let res: { status: number; body: ShopifyProductRecommendationsOperation };
+  try {
+    res = await shopifyFetch<ShopifyProductRecommendationsOperation>({
+      query: getProductRecommendationsQuery,
+      variables: {
+        productId,
+      },
+    });
+  } catch (e) {
+    logRecoverableShopifyFailure(
+      `getProductRecommendations('${productId}')`,
+      e,
+      "an empty list",
+    );
+    return [];
+  }
 
   return reshapeProducts(res.body.data.productRecommendations);
 }
@@ -609,7 +663,11 @@ export async function getProducts({
       },
     });
   } catch (e) {
-    console.error("Shopify getProducts failed. Returning empty list.", e);
+    logRecoverableShopifyFailure(
+      "getProducts()",
+      e,
+      "an empty list",
+    );
     return [];
   }
 

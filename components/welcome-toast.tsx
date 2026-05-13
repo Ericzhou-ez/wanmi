@@ -17,7 +17,7 @@ export function WelcomeToast() {
         description: (
           <>
             Découvrez nos univers déco et mobilier en français.{" "}
-            <a href="/collections" className="text-blue-600 hover:underline">
+            <a href="/collections" className="text-red-600 hover:underline">
               Parcourir les collections
             </a>
           </>

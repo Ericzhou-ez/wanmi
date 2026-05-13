@@ -6,21 +6,24 @@ import { ReactNode } from "react";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { baseUrl } from "lib/utils";
-import { Manrope, Playfair_Display } from "next/font/google";
+import { Lora } from "next/font/google";
+import { Roboto } from "next/font/google";
 
 const { SITE_NAME } = process.env;
 
-const manrope = Manrope({
+const lora = Lora({
   subsets: ["latin"],
-  variable: "--font-manrope",
+  variable: "--font-lora",
   display: "swap",
 });
 
-const playfairDisplay = Playfair_Display({
+const roboto = Roboto({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-roboto",
   display: "swap",
+  weight: ["400", "500", "700"],
 });
+
 
 export const metadata = {
   metadataBase: new URL(baseUrl),
@@ -34,6 +37,11 @@ export const metadata = {
   },
 };
 
+export const viewport = {
+  width: 1024,
+  initialScale: 1,
+};
+
 export default async function RootLayout({
   children,
 }: {
@@ -43,11 +51,8 @@ export default async function RootLayout({
   const cart = getCart();
 
   return (
-    <html
-      lang="fr"
-      className={`${manrope.variable} ${playfairDisplay.variable}`}
-    >
-      <body className="bg-neutral-50 text-black selection:bg-teal-300 dark:bg-neutral-900 dark:text-white dark:selection:bg-pink-500 dark:selection:text-white">
+    <html lang="fr" className={`${lora.variable} ${roboto.variable}`}>
+      <body className="bg-white text-neutral-900">
         <CartProvider cartPromise={cart}>
           <Navbar />
           <main>

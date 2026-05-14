@@ -1,4 +1,5 @@
 import { CartProvider } from "components/cart/cart-context";
+import { WishlistProvider } from "components/wishlist/wishlist-context";
 import { Navbar } from "components/layout/navbar";
 import { getCart } from "lib/shopify";
 import { ReactNode } from "react";
@@ -52,11 +53,13 @@ export default async function RootLayout({
      <html lang="fr" className={`${lora.variable} ${inter.variable}`}>
         <body className="bg-white text-neutral-900">
            <CartProvider cartPromise={cart}>
-              <Navbar />
-              <main>
-                 {children}
-                 <Toaster closeButton />
-              </main>
+              <WishlistProvider>
+                 <Navbar />
+                 <main>
+                    {children}
+                    <Toaster closeButton />
+                 </main>
+              </WishlistProvider>
            </CartProvider>
         </body>
      </html>

@@ -1,5 +1,6 @@
 import CartModal from "components/cart/modal";
 import WordLogo from "components/icons/word-logo";
+import { WishlistButton } from "components/wishlist/wishlist-button";
 import { auth } from "lib/auth";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -62,16 +63,7 @@ export async function Navbar() {
             >
               <i className="ph-user ph-sm text-neutral-900" />
             </Link>
-            <button
-              type="button"
-              aria-label="Favoris"
-              aria-disabled="true"
-              disabled
-              title="Fonctionnalité bientôt disponible"
-              className="hidden h-8 w-8 cursor-not-allowed items-center justify-center rounded-md border border-neutral-200 text-neutral-500 md:flex"
-            >
-              <i className="ph-heart ph-sm text-neutral-500" />
-            </button>
+            <WishlistButton />
             <CartModal />
           </div>
         </div>

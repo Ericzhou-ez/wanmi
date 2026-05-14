@@ -1,12 +1,14 @@
-import { GridTileImage } from "components/grid/tile";
 import Footer from "components/layout/footer";
-import { Gallery } from "components/product/gallery";
-import { ProductDescription } from "components/product/product-description";
+import { ProductGallery } from "components/product/product-gallery";
+import { ProductInfo } from "components/product/product-info";
+import { ProductStickyNav } from "components/product/product-sticky-nav";
+import { ProductRecommendations } from "components/product/product-recommendations";
+import { WhyBuyFromWanmi } from "components/product/why-buy-from-wanmi";
 import { HIDDEN_PRODUCT_TAG } from "lib/constants";
-import { getProduct, getProductRecommendations } from "lib/shopify";
+import { getProduct } from "lib/shopify";
+import { parseProductDescription } from "lib/parse-product-description";
 import type { Image } from "lib/shopify/types";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
@@ -55,6 +57,17 @@ export default async function ProductPage(props: {
 
   if (!product) return notFound();
 
+  const parsedDescription = parseProductDescription(
+    product.descriptionHtml || "",
+  );
+
+  const images = product.images.map((image: Image) => ({
+    src: image.url,
+    altText: image.altText,
+    width: image.width,
+    height: image.height,
+  }));
+
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -80,70 +93,100 @@ export default async function ProductPage(props: {
           __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c"),
         }}
       />
-      <div className="mx-auto max-w-(--breakpoint-2xl) px-4">
-        <div className="flex flex-col bg-white p-8 md:p-12 lg:flex-row lg:gap-8">
-          <div className="h-full w-full basis-full lg:basis-4/6">
-            <Suspense
-              fallback={
-                <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden" />
-              }
-            >
-              <Gallery
-                images={product.images.slice(0, 5).map((image: Image) => ({
-                  src: image.url,
-                  altText: image.altText,
-                }))}
-              />
-            </Suspense>
+      <Suspense fallback={null}>
+        <ProductStickyNav product={product} />
+      </Suspense>
+
+      <div className="mx-auto max-w-(--breakpoint-2xl) px-4 lg:px-6">
+        {/* Hero: Gallery (sticky) + Info (scrollable) */}
+        <div
+          id="product-hero"
+          className="flex flex-col py-6 lg:flex-row lg:gap-10 lg:py-10"
+        >
+          {/* Left: Gallery – sticky on desktop */}
+          <div className="w-full lg:w-[55%] xl:w-[58%]" id="apercu">
+            <div className="lg:sticky lg:top-24">
+              <ProductGallery images={images} />
+            </div>
           </div>
 
-          <div className="basis-full lg:basis-2/6">
+          {/* Right: Product Info – scrolls naturally */}
+          <div className="mt-6 w-full lg:mt-0 lg:w-[45%] xl:w-[42%]">
             <Suspense fallback={null}>
-              <ProductDescription product={product} />
+              <ProductInfo
+                product={product}
+                parsedDescription={parsedDescription}
+              />
             </Suspense>
           </div>
         </div>
-        <RelatedProducts id={product.id} />
+
+        {/* Recommendations */}
+        <Suspense
+          fallback={
+            <div className="h-[400px] animate-pulse rounded-lg bg-neutral-50" />
+          }
+        >
+          <ProductRecommendations productId={product.id} />
+        </Suspense>
+
+        {/* Delivery & returns info */}
+        <section
+          id="delivery-section"
+          className="border-t border-neutral-200 py-10"
+        >
+          <h2 className="mb-6 text-2xl font-medium text-neutral-900">
+            Livraisons & retours
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-lg border border-neutral-200 p-5">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100">
+                <svg className="h-5 w-5 text-neutral-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                </svg>
+              </div>
+              <h3 className="mb-1 text-sm font-semibold text-neutral-900">
+                Livraison gratuite
+              </h3>
+              <p className="text-sm text-neutral-600">
+                Livraison standard gratuite sur toutes les commandes en France
+                métropolitaine.
+              </p>
+            </div>
+            <div className="rounded-lg border border-neutral-200 p-5">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100">
+                <svg className="h-5 w-5 text-neutral-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                </svg>
+              </div>
+              <h3 className="mb-1 text-sm font-semibold text-neutral-900">
+                Retours sous 30 jours
+              </h3>
+              <p className="text-sm text-neutral-600">
+                Retournez gratuitement tout article sous 30 jours après
+                réception. Remboursement complet garanti.
+              </p>
+            </div>
+            <div className="rounded-lg border border-neutral-200 p-5">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100">
+                <svg className="h-5 w-5 text-neutral-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                </svg>
+              </div>
+              <h3 className="mb-1 text-sm font-semibold text-neutral-900">
+                Paiement sécurisé
+              </h3>
+              <p className="text-sm text-neutral-600">
+                Transactions cryptées SSL. Paiement par carte, PayPal ou en 3×
+                sans frais.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
+
+      <WhyBuyFromWanmi />
       <Footer />
     </>
-  );
-}
-
-async function RelatedProducts({ id }: { id: string }) {
-  const relatedProducts = await getProductRecommendations(id);
-
-  if (!relatedProducts.length) return null;
-
-  return (
-    <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Produits associés</h2>
-      <ul className="flex w-full gap-4 overflow-x-auto pt-1">
-        {relatedProducts.map((product) => (
-          <li
-            key={product.handle}
-            className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
-          >
-            <Link
-              className="relative h-full w-full"
-              href={`/product/${product.handle}`}
-              prefetch={true}
-            >
-              <GridTileImage
-                alt={product.title}
-                label={{
-                  title: product.title,
-                  amount: product.priceRange.maxVariantPrice.amount,
-                  currencyCode: product.priceRange.maxVariantPrice.currencyCode,
-                }}
-                src={product.featuredImage?.url}
-                fill
-                sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
-              />
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }

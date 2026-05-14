@@ -1,6 +1,6 @@
 "use client";
 
-import clsx from "clsx";
+import { cn } from "lib/utils";
 import { ProductOption, ProductVariant } from "lib/shopify/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -45,62 +45,68 @@ export function VariantSelector({
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
-  return options.map((option) => (
-    <form key={option.id}>
-      <dl className="mb-8">
-        <dt className="mb-4 text-sm uppercase tracking-wide">{option.name}</dt>
-        <dd className="flex flex-wrap gap-3">
-          {option.values.map((value) => {
-            const optionNameLowerCase = option.name.toLowerCase();
+  return (
+    <>
+      {options.map((option) => (
+        <form key={option.id}>
+          <dl className="mb-5">
+            <dt className="mb-3 text-sm font-medium text-neutral-700">
+              <span>Option : </span>
+              <span className="font-semibold">{option.name}</span>
+            </dt>
+            <dd className="flex flex-wrap gap-2">
+              {option.values.map((value) => {
+                const optionNameLowerCase = option.name.toLowerCase();
 
-            // Base option params on current searchParams so we can preserve any other param state.
-            const optionParams: Record<string, string> = {};
-            searchParams.forEach((v, k) => (optionParams[k] = v));
-            optionParams[optionNameLowerCase] = value;
+                const optionParams: Record<string, string> = {};
+                searchParams.forEach((v, k) => (optionParams[k] = v));
+                optionParams[optionNameLowerCase] = value;
 
-            // Filter out invalid options and check if the option combination is available for sale.
-            const filtered = Object.entries(optionParams).filter(
-              ([key, value]) =>
-                options.find(
-                  (option) =>
-                    option.name.toLowerCase() === key &&
-                    option.values.includes(value),
-                ),
-            );
-            const isAvailableForSale = combinations.find((combination) =>
-              filtered.every(
-                ([key, value]) =>
-                  combination[key] === value && combination.availableForSale,
-              ),
-            );
+                const filtered = Object.entries(optionParams).filter(
+                  ([key, value]) =>
+                    options.find(
+                      (option) =>
+                        option.name.toLowerCase() === key &&
+                        option.values.includes(value),
+                    ),
+                );
+                const isAvailableForSale = combinations.find((combination) =>
+                  filtered.every(
+                    ([key, value]) =>
+                      combination[key] === value &&
+                      combination.availableForSale,
+                  ),
+                );
 
-            // The option is active if it's in the selected options.
-            const isActive = searchParams.get(optionNameLowerCase) === value;
+                const isActive =
+                  searchParams.get(optionNameLowerCase) === value;
 
-            return (
-              <button
-                formAction={() => updateOption(optionNameLowerCase, value)}
-                key={`${option.id}-${value}`}
-                aria-disabled={!isAvailableForSale}
-                disabled={!isAvailableForSale}
-                title={`${option.name} ${value}${!isAvailableForSale ? " (Rupture de stock)" : ""}`}
-                className={clsx(
-                  "flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm",
-                  {
-                    "cursor-default ring-2 ring-blue-600": isActive,
-                    "ring-1 ring-transparent transition duration-300 ease-in-out hover:ring-blue-600":
-                      !isActive && isAvailableForSale,
-                    "relative z-10 cursor-not-allowed overflow-hidden bg-neutral-100 text-neutral-500 ring-1 ring-neutral-300 before:absolute before:inset-x-0 before:-z-10 before:h-px before:-rotate-45 before:bg-neutral-300 before:transition-transform":
-                      !isAvailableForSale,
-                  },
-                )}
-              >
-                {value}
-              </button>
-            );
-          })}
-        </dd>
-      </dl>
-    </form>
-  ));
+                return (
+                  <button
+                    formAction={() =>
+                      updateOption(optionNameLowerCase, value)
+                    }
+                    key={`${option.id}-${value}`}
+                    aria-disabled={!isAvailableForSale}
+                    disabled={!isAvailableForSale}
+                    title={`${option.name} ${value}${!isAvailableForSale ? " (Rupture de stock)" : ""}`}
+                    className={cn(
+                      "rounded-md border px-4 py-2 text-sm transition-all",
+                      isActive
+                        ? "border-neutral-900 bg-neutral-900 font-medium text-white"
+                        : isAvailableForSale
+                          ? "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-500"
+                          : "relative cursor-not-allowed border-neutral-200 bg-neutral-50 text-neutral-300 line-through",
+                    )}
+                  >
+                    {value}
+                  </button>
+                );
+              })}
+            </dd>
+          </dl>
+        </form>
+      ))}
+    </>
+  );
 }

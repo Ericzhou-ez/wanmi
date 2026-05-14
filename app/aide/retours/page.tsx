@@ -16,7 +16,9 @@ export default function RetoursPage() {
         >
           ← Retour à l’aide
         </Link>
-        <h1 className="mt-4 text-4xl font-semibold text-neutral-900">Retours</h1>
+        <h1 className="mt-4 text-4xl font-semibold text-neutral-900">
+          Retours
+        </h1>
         <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-8">
           <p className="text-sm text-neutral-700">
             Si un article ne convient pas, vous pouvez demander un retour. On
@@ -25,7 +27,9 @@ export default function RetoursPage() {
           <ul className="mt-5 space-y-2 text-sm text-neutral-600">
             <li>Demande de retour: depuis l’e‑mail de commande.</li>
             <li>État: produit non utilisé, dans son emballage d’origine.</li>
-            <li>Remboursement: après contrôle, sur le moyen de paiement initial.</li>
+            <li>
+              Remboursement: après contrôle, sur le moyen de paiement initial.
+            </li>
           </ul>
         </div>
       </section>
@@ -33,4 +37,3 @@ export default function RetoursPage() {
     </>
   );
 }
-

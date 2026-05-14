@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { updateItemQuantity } from "components/cart/actions";
 import type { CartItem } from "lib/shopify/types";
 import { useActionState } from "react";
+import type { UpdateType } from "types/cart";
 
 function SubmitButton({ type }: { type: "plus" | "minus" }) {
   return (
@@ -35,8 +36,8 @@ export function EditItemQuantityButton({
   optimisticUpdate,
 }: {
   item: CartItem;
-  type: "plus" | "minus";
-  optimisticUpdate: any;
+  type: Extract<UpdateType, "plus" | "minus">;
+  optimisticUpdate: (merchandiseId: string, updateType: UpdateType) => void;
 }) {
   const [message, formAction] = useActionState(updateItemQuantity, null);
   const payload = {

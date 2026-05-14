@@ -12,7 +12,10 @@ export default async function SearchPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
-  const { sort, q: searchValue } = searchParams as { [key: string]: string };
+  const sortParam = searchParams?.sort;
+  const searchParam = searchParams?.q;
+  const sort = Array.isArray(sortParam) ? sortParam[0] : sortParam;
+  const searchValue = Array.isArray(searchParam) ? searchParam[0] : searchParam;
   const { sortKey, reverse } =
     sorting.find((item) => item.slug === sort) || defaultSort;
 
@@ -21,6 +24,12 @@ export default async function SearchPage(props: {
 
   return (
     <>
+      <h1 className="mb-4 text-2xl font-semibold text-neutral-900">Recherche</h1>
+      {!searchValue ? (
+        <p className="mb-4 text-sm text-neutral-600">
+          Entrez un mot-clé pour découvrir nos produits.
+        </p>
+      ) : null}
       {searchValue ? (
         <p className="mb-4">
           {products.length === 0

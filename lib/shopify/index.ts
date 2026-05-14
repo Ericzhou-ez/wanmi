@@ -269,6 +269,38 @@ const reshapeProducts = (products: ShopifyProduct[]) => {
   return reshapedProducts;
 };
 
+const CART_COOKIE_NAME = "cartId";
+const CART_COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+};
+
+async function getExistingCartId(): Promise<string> {
+  const cartId = (await cookies()).get(CART_COOKIE_NAME)?.value;
+  if (!cartId) {
+    throw new Error("Cart is not initialized.");
+  }
+  return cartId;
+}
+
+async function getOrCreateCartId(): Promise<string> {
+  const cookieStore = await cookies();
+  const existingCartId = cookieStore.get(CART_COOKIE_NAME)?.value;
+  if (existingCartId) {
+    return existingCartId;
+  }
+
+  const cart = await createCart();
+  if (!cart.id) {
+    throw new Error("Cart creation failed.");
+  }
+
+  cookieStore.set(CART_COOKIE_NAME, cart.id, CART_COOKIE_OPTIONS);
+  return cart.id;
+}
+
 export async function createCart(): Promise<Cart> {
   const res = await shopifyFetch<ShopifyCreateCartOperation>({
     query: createCartMutation,
@@ -280,7 +312,7 @@ export async function createCart(): Promise<Cart> {
 export async function addToCart(
   lines: { merchandiseId: string; quantity: number }[],
 ): Promise<Cart> {
-  const cartId = (await cookies()).get("cartId")?.value!;
+  const cartId = await getOrCreateCartId();
   const res = await shopifyFetch<ShopifyAddToCartOperation>({
     query: addToCartMutation,
     variables: {
@@ -292,7 +324,7 @@ export async function addToCart(
 }
 
 export async function removeFromCart(lineIds: string[]): Promise<Cart> {
-  const cartId = (await cookies()).get("cartId")?.value!;
+  const cartId = await getExistingCartId();
   const res = await shopifyFetch<ShopifyRemoveFromCartOperation>({
     query: removeFromCartMutation,
     variables: {
@@ -307,7 +339,7 @@ export async function removeFromCart(lineIds: string[]): Promise<Cart> {
 export async function updateCart(
   lines: { id: string; merchandiseId: string; quantity: number }[],
 ): Promise<Cart> {
-  const cartId = (await cookies()).get("cartId")?.value!;
+  const cartId = await getExistingCartId();
   const res = await shopifyFetch<ShopifyUpdateCartOperation>({
     query: editCartItemsMutation,
     variables: {
@@ -324,7 +356,7 @@ export async function getCart(): Promise<Cart | undefined> {
   cacheTag(TAGS.cart);
   cacheLife("seconds");
 
-  const cartId = (await cookies()).get("cartId")?.value;
+  const cartId = (await cookies()).get(CART_COOKIE_NAME)?.value;
 
   if (!cartId) {
     return undefined;
@@ -545,11 +577,7 @@ export async function getMenu(handle: string): Promise<Menu[]> {
       },
     });
   } catch (e) {
-    logRecoverableShopifyFailure(
-      `getMenu('${handle}')`,
-      e,
-      "an empty menu",
-    );
+    logRecoverableShopifyFailure(`getMenu('${handle}')`, e, "an empty menu");
     return [];
   }
 
@@ -663,11 +691,7 @@ export async function getProducts({
       },
     });
   } catch (e) {
-    logRecoverableShopifyFailure(
-      "getProducts()",
-      e,
-      "an empty list",
-    );
+    logRecoverableShopifyFailure("getProducts()", e, "an empty list");
     return [];
   }
 

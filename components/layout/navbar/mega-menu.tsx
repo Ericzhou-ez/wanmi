@@ -47,19 +47,19 @@ export default function MegaMenu() {
         value={open}
         onValueChange={(v) => setOpen(v ?? "")}
       >
-      <NavigationMenuList className="w-full flex-wrap gap-x-6 gap-y-0.5 md:flex-nowrap">
-        {megaMenuGroups
-          .filter((group) => getMegaMenuPanelColumns(group).length > 0)
-          .map((group) => (
-          <NavigationMenuItem key={group.trigger} value={group.trigger}>
-            <NavigationMenuTrigger>{group.trigger}</NavigationMenuTrigger>
-            <NavigationMenuContent className="w-full">
-              <MegaMenuPanel group={group} />
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        ))}
-      </NavigationMenuList>
-    </NavigationMenu>
+        <NavigationMenuList className="w-full flex-wrap gap-x-6 gap-y-0.5 md:flex-nowrap">
+          {megaMenuGroups
+            .filter((group) => getMegaMenuPanelColumns(group).length > 0)
+            .map((group) => (
+              <NavigationMenuItem key={group.trigger} value={group.trigger}>
+                <NavigationMenuTrigger>{group.trigger}</NavigationMenuTrigger>
+                <NavigationMenuContent className="w-full">
+                  <MegaMenuPanel group={group} />
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            ))}
+        </NavigationMenuList>
+      </NavigationMenu>
     </>
   );
 }

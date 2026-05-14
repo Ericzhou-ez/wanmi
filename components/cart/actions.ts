@@ -13,7 +13,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function addItem(
-  prevState: any,
+  _prevState: unknown,
   selectedVariantId: string | undefined,
 ) {
   if (!selectedVariantId) {
@@ -28,7 +28,7 @@ export async function addItem(
   }
 }
 
-export async function removeItem(prevState: any, merchandiseId: string) {
+export async function removeItem(_prevState: unknown, merchandiseId: string) {
   try {
     const cart = await getCart();
 
@@ -52,7 +52,7 @@ export async function removeItem(prevState: any, merchandiseId: string) {
 }
 
 export async function updateItemQuantity(
-  prevState: any,
+  _prevState: unknown,
   payload: {
     merchandiseId: string;
     quantity: number;
@@ -96,11 +96,22 @@ export async function updateItemQuantity(
 }
 
 export async function redirectToCheckout() {
-  let cart = await getCart();
-  redirect(cart!.checkoutUrl);
+  const cart = await getCart();
+  if (!cart?.checkoutUrl) {
+    redirect("/search");
+  }
+  redirect(cart.checkoutUrl);
 }
 
 export async function createCartAndSetCookie() {
-  let cart = await createCart();
-  (await cookies()).set("cartId", cart.id!);
+  const cart = await createCart();
+  if (!cart.id) {
+    throw new Error("Impossible de creer un panier.");
+  }
+  (await cookies()).set("cartId", cart.id, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
 }

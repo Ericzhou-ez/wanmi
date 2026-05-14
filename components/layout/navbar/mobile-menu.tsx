@@ -17,7 +17,11 @@ const mobileQuickLinks = [
   { title: "Toutes les collections", path: "/collections" },
 ];
 
-export default function MobileMenu() {
+export default function MobileMenu({
+  isSignedIn = false,
+}: {
+  isSignedIn?: boolean;
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +36,7 @@ export default function MobileMenu() {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [isOpen]);
+  }, []);
 
   useEffect(() => {
     setIsOpen(false);
@@ -41,6 +45,7 @@ export default function MobileMenu() {
   return (
     <>
       <button
+        type="button"
         onClick={openMobileMenu}
         aria-label="Ouvrir le menu mobile"
         className="flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors md:hidden"
@@ -72,6 +77,7 @@ export default function MobileMenu() {
             <Dialog.Panel className="fixed inset-0 flex h-dvh w-full flex-col overflow-y-auto overscroll-contain bg-white pb-6 [-webkit-overflow-scrolling:touch]">
               <div className="p-4">
                 <button
+                  type="button"
                   className="mb-4 flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors"
                   onClick={closeMobileMenu}
                   aria-label="Fermer le menu mobile"
@@ -93,7 +99,7 @@ export default function MobileMenu() {
                   {mobileQuickLinks.map((item) => (
                     <li
                       className="py-2 text-xl text-black transition-colors hover:text-neutral-500"
-                      key={item.title}
+                      key={item.path}
                     >
                       <Link
                         href={item.path}
@@ -104,34 +110,45 @@ export default function MobileMenu() {
                       </Link>
                     </li>
                   ))}
+                  <li className="py-2 text-xl text-black transition-colors hover:text-neutral-500">
+                    <Link
+                      href={isSignedIn ? "/account" : "/auth/signin"}
+                      prefetch={true}
+                      onClick={closeMobileMenu}
+                    >
+                      {isSignedIn ? "Mon compte" : "Connexion"}
+                    </Link>
+                  </li>
                 </ul>
 
                 <div className="space-y-6">
                   {megaMenuGroups
-                    .filter((group) => getMegaMenuPanelColumns(group).length > 0)
+                    .filter(
+                      (group) => getMegaMenuPanelColumns(group).length > 0,
+                    )
                     .map((group) => (
-                    <div key={group.trigger}>
-                      <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-500">
-                        {group.trigger}
-                      </h3>
-                      <ul className="mt-2 space-y-2">
-                        {getMegaMenuFlatLinks(group).map((item) => (
-                          <li
-                            className="text-base text-black transition-colors hover:text-neutral-500"
-                            key={`${group.trigger}-${item.href}-${item.label}`}
-                          >
-                            <Link
-                              href={item.href}
-                              prefetch={true}
-                              onClick={closeMobileMenu}
+                      <div key={group.trigger}>
+                        <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-500">
+                          {group.trigger}
+                        </h3>
+                        <ul className="mt-2 space-y-2">
+                          {getMegaMenuFlatLinks(group).map((item) => (
+                            <li
+                              className="text-base text-black transition-colors hover:text-neutral-500"
+                              key={`${group.trigger}-${item.href}-${item.label}`}
                             >
-                              {item.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                              <Link
+                                href={item.href}
+                                prefetch={true}
+                                onClick={closeMobileMenu}
+                              >
+                                {item.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                 </div>
               </div>
             </Dialog.Panel>

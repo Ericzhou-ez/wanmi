@@ -14,13 +14,14 @@ import {
   getProducts,
 } from "lib/shopify";
 import { mainCollections } from "lib/storefront-content";
+import type { HomeHeroProduct } from "types/home-hero";
 
 export const metadata = {
-   description:
-      "Maison Atelier, boutique design en ligne : mobilier, décoration et inspirations d'intérieur.",
-   openGraph: {
-      type: "website",
-   },
+  description:
+    "Maison Atelier, boutique design en ligne : mobilier, décoration et inspirations d'intérieur.",
+  openGraph: {
+    type: "website",
+  },
 };
 
 async function getProductsForCollectionTag({
@@ -65,7 +66,8 @@ export default async function HomePage() {
     topSellers,
   ] = await Promise.all([
     getProductsForCollectionTag({
-      collectionId: mainCollections.find((c) => c.slug === "salon")?.collectionId,
+      collectionId: mainCollections.find((c) => c.slug === "salon")
+        ?.collectionId,
       tag: "Salon",
       limit: 5,
     }),
@@ -111,7 +113,8 @@ export default async function HomePage() {
         : ([handle, undefined] as const);
     }),
   );
-  const productsByHandle = Object.fromEntries(
+  const productsByHandle: Record<string, HomeHeroProduct | undefined> =
+    Object.fromEntries(
     heroProducts.map(([handle, p]) => [
       handle,
       p

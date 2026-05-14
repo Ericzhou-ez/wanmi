@@ -13,22 +13,7 @@ import React, {
   useMemo,
   useOptimistic,
 } from "react";
-
-type UpdateType = "plus" | "minus" | "delete";
-
-type CartAction =
-  | {
-      type: "UPDATE_ITEM";
-      payload: { merchandiseId: string; updateType: UpdateType };
-    }
-  | {
-      type: "ADD_ITEM";
-      payload: { variant: ProductVariant; product: Product };
-    };
-
-type CartContextType = {
-  cartPromise: Promise<Cart | undefined>;
-};
+import type { CartAction, CartContextType, UpdateType } from "types/cart";
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 

@@ -12,8 +12,12 @@ export function Gallery({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const imageIndex = searchParams.has("image")
-    ? parseInt(searchParams.get("image")!)
+  const rawImageIndex = Number(searchParams.get("image"));
+  const normalizedImageIndex = Number.isFinite(rawImageIndex)
+    ? Math.trunc(rawImageIndex)
+    : 0;
+  const imageIndex = Number.isFinite(normalizedImageIndex)
+    ? Math.min(Math.max(normalizedImageIndex, 0), Math.max(images.length - 1, 0))
     : 0;
 
   const updateImage = (index: string) => {
@@ -48,7 +52,7 @@ export function Gallery({
             <div className="mx-auto flex h-11 items-center rounded-full border border-white bg-neutral-50/80 text-neutral-500 backdrop-blur-sm">
               <button
                 formAction={() => updateImage(previousImageIndex.toString())}
-                aria-label="Previous product image"
+                aria-label="Image précédente"
                 className={buttonClassName}
               >
                 <ArrowLeftIcon className="h-5" />
@@ -56,7 +60,7 @@ export function Gallery({
               <div className="mx-1 h-6 w-px bg-neutral-500"></div>
               <button
                 formAction={() => updateImage(nextImageIndex.toString())}
-                aria-label="Next product image"
+                aria-label="Image suivante"
                 className={buttonClassName}
               >
                 <ArrowRightIcon className="h-5" />
@@ -75,7 +79,7 @@ export function Gallery({
               <li key={image.src} className="h-20 w-20">
                 <button
                   formAction={() => updateImage(index.toString())}
-                  aria-label="Select product image"
+                  aria-label={`Afficher l'image ${index + 1}`}
                   className="h-full w-full"
                 >
                   <GridTileImage

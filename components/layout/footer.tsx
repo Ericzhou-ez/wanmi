@@ -129,7 +129,11 @@ export default async function Footer() {
               spam).
             </p>
             <form className="mt-5 flex gap-2">
+              <label htmlFor="footer-newsletter-email" className="sr-only">
+                Adresse e-mail pour la newsletter
+              </label>
               <input
+                id="footer-newsletter-email"
                 type="email"
                 name="email"
                 placeholder="Votre e-mail"
@@ -149,7 +153,9 @@ export default async function Footer() {
           <div className="flex flex-col gap-2 md:flex-row md:items-center">
             <p>
               &copy; {copyrightDate} {copyrightName}
-              {copyrightName.length && !copyrightName.endsWith(".") ? "." : ""}{" "}
+              {copyrightName.length && !copyrightName.endsWith(".")
+                ? "."
+                : ""}{" "}
               Tous droits réservés.
             </p>
             <div className="md:ml-auto flex flex-wrap gap-x-4 gap-y-2">

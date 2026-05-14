@@ -283,3 +283,139 @@ export type ShopifyProductsOperation = {
     sortKey?: string;
   };
 };
+
+export type ShopifyCustomer = {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ShopifyFindCustomerByEmailOperation = {
+  data: {
+    customers: Connection<ShopifyCustomer>;
+  };
+  variables: {
+    query: string;
+  };
+};
+
+export type ShopifyCustomerCreateOperation = {
+  data: {
+    customerCreate: {
+      customer: ShopifyCustomer | null;
+      userErrors: { field?: string[] | null; message: string }[];
+    };
+  };
+  variables: {
+    input: {
+      email: string;
+      firstName?: string;
+      lastName?: string;
+      tags?: string[];
+    };
+  };
+};
+
+export type ShopifyOrderMoney = {
+  amount: string;
+  currencyCode: string;
+};
+
+export type ShopifyOrderLineItem = {
+  id: string;
+  title: string;
+  quantity: number;
+  variant: {
+    id: string | null;
+    title: string | null;
+    image: Image | null;
+    product: {
+      id: string;
+      handle: string;
+      title: string;
+      tags: string[];
+      productType: string | null;
+      vendor: string | null;
+    } | null;
+  } | null;
+};
+
+export type ShopifyOrderReturn = {
+  id: string;
+  name: string | null;
+  status: string;
+};
+
+export type ShopifyReturnableFulfillmentLine = {
+  quantity: number;
+  fulfillmentLineItem: {
+    id: string;
+    lineItem: {
+      id: string;
+      title: string;
+      quantity: number;
+    };
+  };
+};
+
+export type ShopifyReturnableFulfillment = {
+  id: string;
+  returnableFulfillmentLineItems: Connection<ShopifyReturnableFulfillmentLine>;
+};
+
+export type ShopifyOrder = {
+  id: string;
+  name: string;
+  processedAt: string;
+  displayFinancialStatus: string | null;
+  displayFulfillmentStatus: string | null;
+  currentTotalPriceSet: {
+    shopMoney: ShopifyOrderMoney;
+  };
+  lineItems: Connection<ShopifyOrderLineItem>;
+  returnableFulfillments: Connection<ShopifyReturnableFulfillment>;
+  returns: Connection<ShopifyOrderReturn>;
+};
+
+export type ShopifyCustomerOrdersOperation = {
+  data: {
+    customer:
+      | (ShopifyCustomer & {
+          orders: Connection<ShopifyOrder>;
+        })
+      | null;
+  };
+  variables: {
+    customerId: string;
+    first?: number;
+  };
+};
+
+export type ShopifyReturnRequestLineItem = {
+  fulfillmentLineItemId: string;
+  quantity: number;
+  returnReason: string;
+  returnReasonNote?: string;
+};
+
+export type ShopifyReturnRequestOperation = {
+  data: {
+    returnRequest: {
+      return: {
+        id: string;
+        name: string | null;
+        status: string;
+      } | null;
+      userErrors: { field?: string[] | null; message: string }[];
+    };
+  };
+  variables: {
+    input: {
+      orderId: string;
+      returnLineItems: ShopifyReturnRequestLineItem[];
+    };
+  };
+};

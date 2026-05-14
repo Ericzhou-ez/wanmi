@@ -1,9 +1,7 @@
 import { MegaMenuColumn } from "components/layout/navbar/mega-menu-column";
 import { cn } from "lib/utils";
-import {
-  getMegaMenuPanelColumns,
-  type MegaMenuGroup,
-} from "lib/storefront-content";
+import { getMegaMenuPanelColumns } from "lib/storefront-content";
+import type { MegaMenuGroup } from "types/content";
 
 type MegaMenuPanelProps = {
   group: MegaMenuGroup;

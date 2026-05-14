@@ -1,8 +1,4 @@
-export interface ShopifyErrorLike {
-  status: number;
-  message: string;
-  cause?: unknown;
-}
+import type { ShopifyErrorLike } from "types/shopify-errors";
 
 export const isObject = (
   object: unknown,

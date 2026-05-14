@@ -9,6 +9,7 @@ export default function Error({ reset }: { reset: () => void }) {
         votre action.
       </p>
       <button
+        type="button"
         className="mx-auto mt-4 flex w-full items-center justify-center rounded-full bg-red-600 p-4 tracking-wide text-white hover:opacity-90"
         onClick={() => reset()}
       >

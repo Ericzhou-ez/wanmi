@@ -29,7 +29,8 @@ export default async function CategoryPage(props: {
 }) {
   const searchParams = await props.searchParams;
   const params = await props.params;
-  const { sort } = searchParams as { [key: string]: string };
+  const sortParam = searchParams?.sort;
+  const sort = Array.isArray(sortParam) ? sortParam[0] : sortParam;
   const { sortKey, reverse } =
     sorting.find((item) => item.slug === sort) || defaultSort;
   const products = await getCollectionProducts({

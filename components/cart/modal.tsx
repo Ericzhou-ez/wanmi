@@ -10,15 +10,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
+import type { MerchandiseSearchParams } from "types/cart";
 import { createCartAndSetCookie, redirectToCheckout } from "./actions";
 import { useCart } from "./cart-context";
 import { DeleteItemButton } from "./delete-item-button";
 import { EditItemQuantityButton } from "./edit-item-quantity-button";
 import OpenCart from "./open-cart";
-
-type MerchandiseSearchParams = {
-  [key: string]: string;
-};
 
 export default function CartModal() {
   const { cart, updateCartItem } = useCart();
@@ -29,7 +26,9 @@ export default function CartModal() {
 
   useEffect(() => {
     if (!cart) {
-      createCartAndSetCookie();
+      createCartAndSetCookie().catch(() => {
+        // No-op: cart creation is retried on next interaction.
+      });
     }
   }, [cart]);
 
@@ -44,11 +43,11 @@ export default function CartModal() {
       }
       quantityRef.current = cart?.totalQuantity;
     }
-  }, [isOpen, cart?.totalQuantity, quantityRef]);
+  }, [isOpen, cart?.totalQuantity]);
 
   return (
     <>
-      <button aria-label="Ouvrir le panier" onClick={openCart}>
+      <button type="button" aria-label="Ouvrir le panier" onClick={openCart}>
         <OpenCart quantity={cart?.totalQuantity} />
       </button>
       <Transition show={isOpen}>
@@ -76,7 +75,11 @@ export default function CartModal() {
             <Dialog.Panel className="fixed bottom-0 right-0 top-0 flex h-full w-full flex-col border-l border-neutral-200 bg-white/80 p-6 text-black backdrop-blur-xl md:w-[390px]">
               <div className="flex items-center justify-between">
                 <p className="text-lg font-semibold">Mon panier</p>
-                <button aria-label="Fermer le panier" onClick={closeCart}>
+                <button
+                  type="button"
+                  aria-label="Fermer le panier"
+                  onClick={closeCart}
+                >
                   <CloseCart />
                 </button>
               </div>
@@ -91,15 +94,16 @@ export default function CartModal() {
               ) : (
                 <div className="flex h-full flex-col justify-between overflow-hidden p-1">
                   <ul className="grow overflow-auto py-4">
-                    {cart.lines
+                    {[...cart.lines]
                       .sort((a, b) =>
                         a.merchandise.product.title.localeCompare(
                           b.merchandise.product.title,
                         ),
                       )
                       .map((item, i) => {
-                        const merchandiseSearchParams =
-                          {} as MerchandiseSearchParams;
+                        const merchandiseSearchParams: MerchandiseSearchParams =
+                          {};
+                        const featuredImage = item.merchandise.product.featuredImage;
 
                         item.merchandise.selectedOptions.forEach(
                           ({ name, value }) => {
@@ -117,7 +121,7 @@ export default function CartModal() {
 
                         return (
                           <li
-                            key={i}
+                            key={item.id ?? `${item.merchandise.id}-${i}`}
                             className="flex w-full flex-col border-b border-neutral-300"
                           >
                             <div className="relative flex w-full flex-row justify-between px-1 py-4">
@@ -129,19 +133,23 @@ export default function CartModal() {
                               </div>
                               <div className="flex flex-row">
                                 <div className="relative h-16 w-16 overflow-hidden rounded-md border border-neutral-300 bg-neutral-100">
-                                  <Image
-                                    className="h-full w-full object-cover"
-                                    width={64}
-                                    height={64}
-                                    alt={
-                                      item.merchandise.product.featuredImage
-                                        .altText ||
-                                      item.merchandise.product.title
-                                    }
-                                    src={
-                                      item.merchandise.product.featuredImage.url
-                                    }
-                                  />
+                                  {featuredImage?.url ? (
+                                    <Image
+                                      className="h-full w-full object-cover"
+                                      width={64}
+                                      height={64}
+                                      alt={
+                                        featuredImage.altText ||
+                                        item.merchandise.product.title
+                                      }
+                                      src={featuredImage.url}
+                                    />
+                                  ) : (
+                                    <div
+                                      aria-hidden="true"
+                                      className="h-full w-full bg-neutral-100"
+                                    />
+                                  )}
                                 </div>
                                 <Link
                                   href={merchandiseUrl}

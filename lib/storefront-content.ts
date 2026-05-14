@@ -1,12 +1,19 @@
-export type MainCollection = {
-  slug: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  tag: string;
-  collectionId?: string;
-  accentClass: string;
-};
+import type {
+  MainCollection,
+  MegaMenuColumn,
+  MegaMenuColumnLink,
+  MegaMenuGroup,
+  MegaMenuInspirationData,
+} from "types/content";
+export type {
+  MainCollection,
+  MegaMenuColumn,
+  MegaMenuColumnLink,
+  MegaMenuColumnSection,
+  MegaMenuGroup,
+  MegaMenuInspirationData,
+  MegaMenuLegacyItem,
+} from "types/content";
 
 export const mainCollections: MainCollection[] = [
   {
@@ -80,49 +87,6 @@ export const mainCollections: MainCollection[] = [
   },
 ];
 
-/** Inspiration block at the bottom of a mega-menu column (real photography). */
-export type MegaMenuInspirationData = {
-  title: string;
-  href: string;
-  imageSrc: string;
-  imageAlt: string;
-};
-
-export type MegaMenuColumnLink = {
-  label: string;
-  href: string;
-};
-
-export type MegaMenuColumnSection = {
-  label: string;
-  links: MegaMenuColumnLink[];
-};
-
-export type MegaMenuColumn = {
-  id: string;
-  /** Column heading (not a `<p>` — rendered as a heading + link). */
-  title: string;
-  titleHref: string;
-  links: MegaMenuColumnLink[];
-  sections?: MegaMenuColumnSection[];
-  inspiration: MegaMenuInspirationData;
-  tone?: "default" | "muted";
-};
-
-export type MegaMenuLegacyItem = {
-  label: string;
-  href: string;
-  helper?: string;
-};
-
-export type MegaMenuGroup = {
-  /** Top-level nav trigger label. */
-  trigger: string;
-  columns?: MegaMenuColumn[];
-  /** Legacy shape (e.g. stale bundles) — used only when `columns` is missing or empty. */
-  items?: MegaMenuLegacyItem[];
-};
-
 const FALLBACK_INSPIRATION: MegaMenuInspirationData = {
   title: "Découvrir →",
   href: "/search",
@@ -132,7 +96,9 @@ const FALLBACK_INSPIRATION: MegaMenuInspirationData = {
 };
 
 /** Resolves columns for panels and mobile flattening (supports legacy `items`). */
-export function getMegaMenuPanelColumns(group: MegaMenuGroup): MegaMenuColumn[] {
+export function getMegaMenuPanelColumns(
+  group: MegaMenuGroup,
+): MegaMenuColumn[] {
   const cols = group.columns;
   if (Array.isArray(cols) && cols.length > 0) {
     return cols;
@@ -153,7 +119,9 @@ export function getMegaMenuPanelColumns(group: MegaMenuGroup): MegaMenuColumn[] 
 }
 
 /** Flatten column links for mobile drawers (excludes inspiration cards). */
-export function getMegaMenuFlatLinks(group: MegaMenuGroup): MegaMenuColumnLink[] {
+export function getMegaMenuFlatLinks(
+  group: MegaMenuGroup,
+): MegaMenuColumnLink[] {
   const out: MegaMenuColumnLink[] = [];
   for (const col of getMegaMenuPanelColumns(group)) {
     out.push({ label: col.title, href: col.titleHref });
@@ -182,8 +150,7 @@ const unsplash = {
     "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=900&q=80",
   literie:
     "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=900&q=80",
-  deco:
-    "https://images.unsplash.com/photo-1615529328331-f8917597711f?auto=format&fit=crop&w=900&q=80",
+  deco: "https://images.unsplash.com/photo-1615529328331-f8917597711f?auto=format&fit=crop&w=900&q=80",
   inspiration:
     "https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=900&q=80",
   promos:
@@ -237,7 +204,10 @@ export const megaMenuGroups: MegaMenuGroup[] = [
         links: [
           { label: "Tables à manger", href: "/collections/salle-a-manger" },
           { label: "Chaises et bancs", href: "/collections/chaises-lounge" },
-          { label: "Buffets et vaisseliers", href: "/collections/salle-a-manger" },
+          {
+            label: "Buffets et vaisseliers",
+            href: "/collections/salle-a-manger",
+          },
           { label: "Art de la table", href: "/collections/decoration" },
           { label: "Luminaires suspendus", href: "/collections/decoration" },
         ],
@@ -254,7 +224,10 @@ export const megaMenuGroups: MegaMenuGroup[] = [
         titleHref: "/search?q=bureau",
         links: [
           { label: "Bureaux et secrétaires", href: "/search?q=bureau" },
-          { label: "Fauteuils de travail", href: "/collections/chaises-lounge" },
+          {
+            label: "Fauteuils de travail",
+            href: "/collections/chaises-lounge",
+          },
           { label: "Rangements bureau", href: "/collections/decoration" },
         ],
         sections: [
@@ -441,7 +414,10 @@ export const megaMenuGroups: MegaMenuGroup[] = [
         title: "Esprit galerie",
         titleHref: "/inspirations/esprit-galerie",
         links: [
-          { label: "Contrastes graphiques", href: "/inspirations/esprit-galerie" },
+          {
+            label: "Contrastes graphiques",
+            href: "/inspirations/esprit-galerie",
+          },
           { label: "Pièces statement", href: "/inspirations/esprit-galerie" },
         ],
         inspiration: {

@@ -1,9 +1,4 @@
-export type SortFilterItem = {
-  title: string;
-  slug: string | null;
-  sortKey: "RELEVANCE" | "BEST_SELLING" | "CREATED_AT" | "PRICE";
-  reverse: boolean;
-};
+import type { SortFilterItem } from "types/search-filters";
 
 export const defaultSort: SortFilterItem = {
   title: "Pertinence",

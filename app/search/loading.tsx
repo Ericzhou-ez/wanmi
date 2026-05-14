@@ -10,7 +10,7 @@ export default function Loading() {
           .map((_, index) => {
             return (
               <Grid.Item
-                key={index}
+                key={`search-skeleton-${index}`}
                 className="animate-pulse bg-neutral-100"
               />
             );

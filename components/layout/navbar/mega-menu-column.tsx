@@ -1,6 +1,6 @@
 import { MegaMenuInspiration } from "components/layout/navbar/mega-menu-inspiration";
 import { NavigationMenuLink } from "components/ui/navigation-menu";
-import type { MegaMenuColumn as MegaMenuColumnType } from "lib/storefront-content";
+import type { MegaMenuColumn as MegaMenuColumnType } from "types/content";
 import Link from "next/link";
 
 type MegaMenuColumnProps = {
@@ -8,18 +8,15 @@ type MegaMenuColumnProps = {
 };
 
 export function MegaMenuColumn({ column }: MegaMenuColumnProps) {
-  const tone =
-    column.tone === "muted" ? "bg-neutral-100/90" : "bg-white";
+  const tone = column.tone === "muted" ? "bg-neutral-100/90" : "bg-white";
 
   return (
-    <div
-      className={`flex min-h-[min(28rem,70vh)] flex-col px-5 py-6 ${tone}`}
-    >
+    <div className={`flex min-h-[min(28rem,70vh)] flex-col px-5 py-6 ${tone}`}>
       <h3 className="mega-menu-group-title text-xs font-bold uppercase tracking-wide text-neutral-900">
         <NavigationMenuLink asChild>
           <Link
             href={column.titleHref}
-            className="inline-flex items-center gap-1 bg-transparent text-inherit no-underline decoration-none outline-none ring-0 hover:bg-transparent hover:text-inherit hover:no-underline hover:decoration-none focus-visible:bg-transparent focus-visible:text-inherit focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none data-[active]:bg-transparent data-[active]:text-inherit"
+            className="inline-flex items-center gap-1 bg-transparent text-inherit no-underline decoration-none hover:bg-transparent hover:text-inherit hover:no-underline hover:decoration-none focus-visible:bg-transparent focus-visible:text-inherit data-[active]:bg-transparent data-[active]:text-inherit"
           >
             {column.title}
             <span aria-hidden className="text-[0.7rem] font-normal">

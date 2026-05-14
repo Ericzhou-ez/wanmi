@@ -80,10 +80,10 @@ export function VariantSelector({
             return (
               <button
                 formAction={() => updateOption(optionNameLowerCase, value)}
-                key={value}
+                key={`${option.id}-${value}`}
                 aria-disabled={!isAvailableForSale}
                 disabled={!isAvailableForSale}
-                title={`${option.name} ${value}${!isAvailableForSale ? " (Out of Stock)" : ""}`}
+                title={`${option.name} ${value}${!isAvailableForSale ? " (Rupture de stock)" : ""}`}
                 className={clsx(
                   "flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm",
                   {

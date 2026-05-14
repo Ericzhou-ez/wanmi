@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import ProductGridItems from "components/layout/product-grid-items";
 import type { Product } from "lib/shopify/types";
-import type { MainCollection } from "lib/storefront-content";
+import type { MainCollection } from "types/content";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -28,7 +28,11 @@ const shopBySectionImages: Record<string, { src: string; alt: string }> = {
   },
 };
 
-export function ShopBySection({ collections }: { collections: MainCollection[] }) {
+export function ShopBySection({
+  collections,
+}: {
+  collections: MainCollection[];
+}) {
   return (
     <section className="mx-auto mt-10 max-w-(--breakpoint-2xl) px-4">
       <div className="flex items-end justify-between gap-4">
@@ -96,7 +100,9 @@ export function ProductCarouselRail({
           <p className="text-xs uppercase tracking-[0.22em] text-neutral-500">
             {subtitle}
           </p>
-          <h2 className="mt-1 text-3xl font-semibold text-neutral-900">{title}</h2>
+          <h2 className="mt-1 text-3xl font-semibold text-neutral-900">
+            {title}
+          </h2>
         </div>
         <Link
           href={href}
@@ -250,7 +256,9 @@ export function LifestyleSection({
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
             <div className="relative p-6 text-white">
               <p className="text-xl font-semibold">Salle à manger</p>
-              <p className="mt-1 text-xs text-white/85">Recevoir, sans effort.</p>
+              <p className="mt-1 text-xs text-white/85">
+                Recevoir, sans effort.
+              </p>
             </div>
           </Link>
 

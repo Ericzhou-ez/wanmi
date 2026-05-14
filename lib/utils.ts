@@ -50,6 +50,23 @@ export const validateEnvironmentVariables = () => {
       "Your `SHOPIFY_STORE_DOMAIN` environment variable includes brackets (ie. `[` and / or `]`). Your site will not work with them there. Please remove them.",
     );
   }
+
+  // Customer account feature uses these. Missing values are non-fatal; the
+  // UI reveals fallback messages and disables the feature gracefully.
+  const customerFeatureVars = [
+    "AUTH_SECRET",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "SHOPIFY_ADMIN_ACCESS_TOKEN",
+  ];
+  const missingCustomerVars = customerFeatureVars.filter(
+    (envVar) => !process.env[envVar],
+  );
+  if (missingCustomerVars.length > 0 && process.env.NODE_ENV !== "production") {
+    console.warn(
+      `[env] Customer account features are partially disabled. Missing: ${missingCustomerVars.join(", ")}`,
+    );
+  }
 };
 
 export function cn(...inputs: ClassValue[]) {

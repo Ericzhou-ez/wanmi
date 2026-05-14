@@ -14,8 +14,9 @@ export default function PolitiqueConfidentialitePage() {
         </h1>
         <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-8">
           <p className="text-sm text-neutral-700">
-            Nous collectons uniquement les informations nécessaires au traitement
-            de votre commande et à l’amélioration de l’expérience du site.
+            Nous collectons uniquement les informations nécessaires au
+            traitement de votre commande et à l’amélioration de l’expérience du
+            site.
           </p>
           <p className="mt-4 text-sm text-neutral-700">
             Vous pouvez demander l’accès, la rectification ou la suppression de
@@ -27,4 +28,3 @@ export default function PolitiqueConfidentialitePage() {
     </>
   );
 }
-

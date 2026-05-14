@@ -70,21 +70,22 @@ export function AddToCart({ product }: { product: Product }) {
   );
   const defaultVariantId = variants.length === 1 ? variants[0]?.id : undefined;
   const selectedVariantId = variant?.id || defaultVariantId;
-  const addItemAction = formAction.bind(null, selectedVariantId);
   const finalVariant = variants.find(
     (variant) => variant.id === selectedVariantId,
-  )!;
+  );
+  const addItemAction = formAction.bind(null, finalVariant?.id);
 
   return (
     <form
       action={async () => {
+        if (!finalVariant) return;
         addCartItem(finalVariant, product);
-        addItemAction();
+        await addItemAction();
       }}
     >
       <SubmitButton
         availableForSale={availableForSale}
-        selectedVariantId={selectedVariantId}
+        selectedVariantId={finalVariant?.id}
       />
       <p aria-live="polite" className="sr-only" role="status">
         {message}

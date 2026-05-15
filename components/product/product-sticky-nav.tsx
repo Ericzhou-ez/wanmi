@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Price from "components/price";
-import { SaveButton } from "./save-button";
 import type { Product } from "lib/shopify/types";
 import { cn } from "lib/utils";
+import { useEffect, useState } from "react";
+import { SaveButton } from "./save-button";
 
 const NAV_SECTIONS = [
   { id: "apercu", label: "Aperçu" },
@@ -66,11 +66,14 @@ export function ProductStickyNav({ product }: { product: Product }) {
   return (
     <div
       className={cn(
-        "fixed left-0 right-0 top-0 z-[60] border-b border-neutral-200 bg-white transition-transform duration-300",
+        "fixed left-0 right-0 top-0 z-[60] border-b border-neutral-200 bg-neutral-50 transition-transform duration-300",
         visible ? "translate-y-0" : "-translate-y-full",
       )}
     >
-      <div className="mx-auto flex max-w-(--breakpoint-2xl) items-center justify-between px-4 py-2 lg:px-6">
+      <div
+        data-product-sticky-inner
+        className="mx-auto flex max-w-(--breakpoint-2xl) items-center justify-between px-4 py-3 md:py-2.5 lg:px-6"
+      >
         <nav className="hidden items-center gap-6 md:flex">
           {NAV_SECTIONS.map((section) => (
             <button
@@ -80,7 +83,7 @@ export function ProductStickyNav({ product }: { product: Product }) {
               className={cn(
                 "text-sm font-medium transition-colors",
                 activeSection === section.id
-                  ? "border-b-2 border-neutral-900 pb-1 text-neutral-900"
+                  ? "border-b-2 border-neutral-900 text-neutral-900"
                   : "text-neutral-500 hover:text-neutral-700",
               )}
             >
@@ -94,9 +97,7 @@ export function ProductStickyNav({ product }: { product: Product }) {
             amount={product.priceRange.maxVariantPrice.amount}
             currencyCode={product.priceRange.maxVariantPrice.currencyCode}
             className="text-lg font-semibold"
-            currencyCodeClassName="hidden"
           />
-          <SaveButton product={product} iconOnly className="hidden md:flex" />
           <button
             type="button"
             onClick={() => {
@@ -107,6 +108,7 @@ export function ProductStickyNav({ product }: { product: Product }) {
           >
             Ajouter au panier
           </button>
+          <SaveButton product={product} iconOnly className="hidden md:flex" />
         </div>
       </div>
     </div>

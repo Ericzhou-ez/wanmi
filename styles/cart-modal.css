@@ -1,0 +1,9 @@
+.cart-modal-panel {
+   width: 100%;
+}
+
+@media (min-width: 768px) {
+   .cart-modal-panel {
+      width: 480px;
+   }
+}

@@ -1,4 +1,5 @@
 import type { ParsedDescription } from "types/product";
+import sanitizeHtml from "sanitize-html";
 
 const SECTION_PATTERNS = {
   description: [
@@ -21,15 +22,114 @@ const SECTION_PATTERNS = {
   ],
 };
 
-function matchesCategory(
-  text: string,
-  patterns: RegExp[],
-): boolean {
+function matchesCategory(text: string, patterns: RegExp[]): boolean {
   return patterns.some((p) => p.test(text));
 }
 
 function stripTags(html: string): string {
-  return html.replace(/<[^>]*>/g, "").trim();
+  return decodeBasicEntities(html.replace(/<[^>]*>/g, "")).trim();
+}
+
+function decodeBasicEntities(text: string): string {
+  return text
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">");
+}
+
+function sanitizeSectionContent(html: string): string {
+  return sanitizeHtml(html, {
+    allowedTags: [
+      "a",
+      "b",
+      "blockquote",
+      "br",
+      "caption",
+      "code",
+      "col",
+      "colgroup",
+      "dd",
+      "div",
+      "dl",
+      "dt",
+      "em",
+      "figcaption",
+      "figure",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "hr",
+      "i",
+      "img",
+      "li",
+      "ol",
+      "p",
+      "pre",
+      "s",
+      "span",
+      "strong",
+      "sub",
+      "sup",
+      "table",
+      "tbody",
+      "td",
+      "tfoot",
+      "th",
+      "thead",
+      "tr",
+      "u",
+      "ul",
+    ],
+    allowedAttributes: {
+      a: ["href", "name", "target", "rel", "title"],
+      col: ["span", "width", "style"],
+      colgroup: ["span", "width", "style"],
+      img: ["src", "alt", "width", "height", "loading", "style"],
+      table: [
+        "align",
+        "border",
+        "cellpadding",
+        "cellspacing",
+        "summary",
+        "width",
+        "style",
+      ],
+      td: ["align", "colspan", "rowspan", "valign", "width", "style"],
+      th: ["align", "colspan", "rowspan", "scope", "valign", "width", "style"],
+      tr: ["align", "valign", "style"],
+      "*": ["class"],
+    },
+    allowedSchemes: ["http", "https", "mailto", "tel"],
+    allowedSchemesByTag: {
+      img: ["http", "https"],
+    },
+    allowedStyles: {
+      "*": {
+        "text-align": [/^left$/i, /^right$/i, /^center$/i, /^justify$/i],
+        "vertical-align": [/^top$/i, /^middle$/i, /^bottom$/i, /^baseline$/i],
+        width: [/^\d+(?:\.\d+)?(?:px|%|em|rem)?$/i],
+        height: [/^\d+(?:\.\d+)?(?:px|%|em|rem)?$/i],
+      },
+      table: {
+        "border-collapse": [/^collapse$/i, /^separate$/i],
+        width: [/^\d+(?:\.\d+)?(?:px|%|em|rem)?$/i],
+      },
+      img: {
+        width: [/^(?:auto|\d+(?:\.\d+)?(?:px|%|em|rem)?)$/i],
+        height: [/^(?:auto|\d+(?:\.\d+)?(?:px|%|em|rem)?)$/i],
+      },
+    },
+    transformTags: {
+      a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }),
+      img: sanitizeHtml.simpleTransform("img", { loading: "lazy" }),
+    },
+  }).trim();
 }
 
 /**
@@ -44,7 +144,11 @@ function stripTags(html: string): string {
  */
 export function parseProductDescription(html: string): ParsedDescription {
   if (!html || !html.trim()) {
-    return { description: null, weightAndDimensions: null, specifications: null };
+    return {
+      description: null,
+      weightAndDimensions: null,
+      specifications: null,
+    };
   }
 
   const headingRe =
@@ -66,7 +170,10 @@ export function parseProductDescription(html: string): ParsedDescription {
 
   if (headings.length === 0) {
     return {
-      description: { title: "La description", content: html },
+      description: {
+        title: "La description",
+        content: sanitizeSectionContent(html),
+      },
       weightAndDimensions: null,
       specifications: null,
     };
@@ -116,26 +223,39 @@ export function parseProductDescription(html: string): ParsedDescription {
   if (descSections.length > 0) {
     result.description = {
       title: descSections[0]!.title,
-      content: descSections.map((s) => s.content).join(""),
+      content: sanitizeSectionContent(
+        descSections.map((s) => s.content).join("\n"),
+      ),
     };
   }
 
   if (wdSections.length > 0) {
     result.weightAndDimensions = {
       title: wdSections[0]!.title,
-      content: wdSections.map((s) => s.content).join(""),
+      content: sanitizeSectionContent(
+        wdSections.map((s) => s.content).join("\n"),
+      ),
     };
   }
 
   if (specSections.length > 0) {
     result.specifications = {
       title: specSections[0]!.title,
-      content: specSections.map((s) => s.content).join(""),
+      content: sanitizeSectionContent(
+        specSections.map((s) => s.content).join("\n"),
+      ),
     };
   }
 
-  if (!result.description && !result.weightAndDimensions && !result.specifications) {
-    result.description = { title: "La description", content: html };
+  if (
+    !result.description &&
+    !result.weightAndDimensions &&
+    !result.specifications
+  ) {
+    result.description = {
+      title: "La description",
+      content: sanitizeSectionContent(html),
+    };
   }
 
   return result;

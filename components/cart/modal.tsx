@@ -1,7 +1,8 @@
 "use client";
 
-import clsx from "clsx";
 import { Dialog, Transition } from "@headlessui/react";
+import clsx from "clsx";
+import { EmptyDiscoveryPrompt } from "components/empty-discovery-prompt";
 import LoadingDots from "components/loading-dots";
 import Price from "components/price";
 import { DEFAULT_OPTION } from "lib/constants";
@@ -72,7 +73,7 @@ export default function CartModal() {
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
           >
-            <Dialog.Panel className="fixed bottom-0 right-0 top-0 flex h-full w-full flex-col border-l border-neutral-200 bg-white/80 p-6 text-black backdrop-blur-xl md:w-[390px]">
+            <Dialog.Panel className="cart-modal-panel fixed bottom-0 right-0 top-0 flex h-full flex-col border-l border-neutral-200 bg-white/80 p-6 text-black backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <p className="text-lg font-semibold">Mon panier</p>
                 <button
@@ -85,12 +86,12 @@ export default function CartModal() {
               </div>
 
               {!cart || cart.lines.length === 0 ? (
-                <div className="mt-20 flex w-full flex-col items-center justify-center overflow-hidden">
-                  <i className="ph-bag ph-4x text-neutral-900" />
-                  <p className="mt-6 text-center text-2xl font-bold">
-                    Votre panier est vide.
-                  </p>
-                </div>
+                <EmptyDiscoveryPrompt
+                  iconClassName="ph-bag"
+                  title="Votre panier est vide."
+                  description="Parcourez nos collections et ajoutez vos pièces préférées au panier."
+                  onClick={closeCart}
+                />
               ) : (
                 <div className="flex h-full flex-col justify-between overflow-hidden p-1">
                   <ul className="grow overflow-auto py-4">
@@ -103,7 +104,9 @@ export default function CartModal() {
                       .map((item, i) => {
                         const merchandiseSearchParams: MerchandiseSearchParams =
                           {};
-                        const featuredImage = item.merchandise.product.featuredImage;
+                        const itemImage =
+                          item.merchandise.image ??
+                          item.merchandise.product.featuredImage;
 
                         item.merchandise.selectedOptions.forEach(
                           ({ name, value }) => {
@@ -133,16 +136,16 @@ export default function CartModal() {
                               </div>
                               <div className="flex flex-row">
                                 <div className="relative h-16 w-16 overflow-hidden rounded-md border border-neutral-300 bg-neutral-100">
-                                  {featuredImage?.url ? (
+                                  {itemImage?.url ? (
                                     <Image
                                       className="h-full w-full object-cover"
                                       width={64}
                                       height={64}
                                       alt={
-                                        featuredImage.altText ||
+                                        itemImage.altText ||
                                         item.merchandise.product.title
                                       }
-                                      src={featuredImage.url}
+                                      src={itemImage.url}
                                     />
                                   ) : (
                                     <div
@@ -156,13 +159,13 @@ export default function CartModal() {
                                   onClick={closeCart}
                                   className="z-30 ml-2 flex flex-row space-x-4"
                                 >
-                                  <div className="flex flex-1 flex-col text-base">
+                                  <div className="flex flex-1 flex-col text-base justify-between">
                                     <span className="leading-tight">
                                       {item.merchandise.product.title}
                                     </span>
                                     {item.merchandise.title !==
                                     DEFAULT_OPTION ? (
-                                      <p className="text-sm text-neutral-500">
+                                      <p className="text-xs text-neutral-500">
                                         {item.merchandise.title}
                                       </p>
                                     ) : null}
@@ -177,7 +180,7 @@ export default function CartModal() {
                                     item.cost.totalAmount.currencyCode
                                   }
                                 />
-                                <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200">
+                                <div className="ml-auto flex flex-row items-center rounded-full border border-neutral-400">
                                   <EditItemQuantityButton
                                     item={item}
                                     type="minus"

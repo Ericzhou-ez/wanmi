@@ -4,6 +4,7 @@ import type { Product } from "lib/shopify/types";
 import type { MainCollection } from "types/content";
 import Image from "next/image";
 import Link from "next/link";
+import "../../styles/home-page.css"
 
 const shopBySectionImages: Record<string, { src: string; alt: string }> = {
   salon: {
@@ -165,7 +166,7 @@ export function FullWidthFeatureSection({
           <p className="text-xs uppercase tracking-[0.3em] text-white/80">
             {eyebrow}
           </p>
-          <h3 className="mt-2 text-4xl md:text-6xl">
+          <h3 className="mt-2 text-4xl md:text-6xl home-secondary-section-title">
             {titleFirstLine}
             {titleSecondLine ? (
               <>

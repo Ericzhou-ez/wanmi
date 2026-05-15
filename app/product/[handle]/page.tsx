@@ -61,7 +61,15 @@ export default async function ProductPage(props: {
     product.descriptionHtml || "",
   );
 
-  const images = product.images.map((image: Image) => ({
+  const images = [
+    ...product.images,
+    ...product.variants.flatMap((variant) =>
+      variant.image &&
+      !product.images.some((image) => image.url === variant.image?.url)
+        ? [variant.image]
+        : [],
+    ),
+  ].map((image: Image) => ({
     src: image.url,
     altText: image.altText,
     width: image.width,
@@ -97,21 +105,32 @@ export default async function ProductPage(props: {
         <ProductStickyNav product={product} />
       </Suspense>
 
-      <div className="mx-auto max-w-(--breakpoint-2xl) px-4 lg:px-6">
+      <div
+        data-product-shell
+        className="mx-auto max-w-(--breakpoint-2xl) px-4 lg:px-6"
+      >
         {/* Hero: Gallery (sticky) + Info (scrollable) */}
         <div
           id="product-hero"
+          data-product-hero
           className="flex flex-col py-6 lg:flex-row lg:gap-10 lg:py-10"
         >
           {/* Left: Gallery – sticky on desktop */}
-          <div className="w-full lg:w-[55%] xl:w-[58%]" id="apercu">
+          <div
+            data-product-gallery-column
+            className="w-full lg:w-[55%] xl:w-[58%]"
+            id="apercu"
+          >
             <div className="lg:sticky lg:top-24">
-              <ProductGallery images={images} />
+              <ProductGallery images={images} variants={product.variants} />
             </div>
           </div>
 
           {/* Right: Product Info – scrolls naturally */}
-          <div className="mt-6 w-full lg:mt-0 lg:w-[45%] xl:w-[42%]">
+          <div
+            data-product-info-column
+            className="mt-6 w-full lg:mt-0 lg:w-[45%] xl:w-[42%]"
+          >
             <Suspense fallback={null}>
               <ProductInfo
                 product={product}
@@ -141,8 +160,18 @@ export default async function ProductPage(props: {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-lg border border-neutral-200 p-5">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100">
-                <svg className="h-5 w-5 text-neutral-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                <svg
+                  className="h-5 w-5 text-neutral-700"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
+                  />
                 </svg>
               </div>
               <h3 className="mb-1 text-sm font-semibold text-neutral-900">
@@ -155,8 +184,18 @@ export default async function ProductPage(props: {
             </div>
             <div className="rounded-lg border border-neutral-200 p-5">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100">
-                <svg className="h-5 w-5 text-neutral-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                <svg
+                  className="h-5 w-5 text-neutral-700"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                  />
                 </svg>
               </div>
               <h3 className="mb-1 text-sm font-semibold text-neutral-900">
@@ -169,8 +208,18 @@ export default async function ProductPage(props: {
             </div>
             <div className="rounded-lg border border-neutral-200 p-5">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100">
-                <svg className="h-5 w-5 text-neutral-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                <svg
+                  className="h-5 w-5 text-neutral-700"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+                  />
                 </svg>
               </div>
               <h3 className="mb-1 text-sm font-semibold text-neutral-900">

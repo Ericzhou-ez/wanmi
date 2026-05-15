@@ -7,26 +7,11 @@ import {
   homeHero,
   isHomeHeroHotspotVisible,
 } from "lib/home-hero";
+import { formatPrice } from "lib/format-price";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { HomeHeroProduct } from "types/home-hero";
-
-function formatPrice(amount?: string, currency?: string) {
-  if (!amount || !currency) return null;
-  const value = Number(amount);
-  if (!Number.isFinite(value)) return `${amount} ${currency}`;
-
-  try {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${amount} ${currency}`;
-  }
-}
 
 export function HomeHero({
   productsByHandle,
@@ -233,10 +218,9 @@ export function HomeHero({
           {visibleHotspots.map((hotspot) => {
             const product = productsByHandle[hotspot.handle];
             const href = `/product/${hotspot.handle}`;
-            const price = formatPrice(
-              product?.priceAmount,
-              product?.priceCurrency,
-            );
+            const price = product?.priceAmount
+              ? formatPrice(product.priceAmount, product.priceCurrency)
+              : null;
             const { x: pctX, y: pctY } = getHotspotPercentForViewport(
               hotspot,
               isLaptop,
@@ -292,10 +276,9 @@ export function HomeHero({
             ? (() => {
                 const product = productsByHandle[openHandle];
                 const href = `/product/${openHandle}`;
-                const price = formatPrice(
-                  product?.priceAmount,
-                  product?.priceCurrency,
-                );
+                const price = product?.priceAmount
+                  ? formatPrice(product.priceAmount, product.priceCurrency)
+                  : null;
 
                 return (
                   <div

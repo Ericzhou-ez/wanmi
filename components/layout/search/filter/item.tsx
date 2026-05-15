@@ -4,7 +4,11 @@ import clsx from "clsx";
 import { createUrl } from "lib/utils";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import type { ListItem, PathFilterItem, SortFilterItem } from "types/search-filters";
+import type {
+  ListItem,
+  PathFilterItem,
+  SortFilterItem,
+} from "types/search-filters";
 
 function PathFilterItem({ item }: { item: PathFilterItem }) {
   const pathname = usePathname();

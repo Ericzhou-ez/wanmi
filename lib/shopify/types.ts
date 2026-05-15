@@ -32,6 +32,7 @@ export type CartItem = {
       name: string;
       value: string;
     }[];
+    image: Image | null;
     product: CartProduct;
   };
 };
@@ -87,6 +88,7 @@ export type ProductVariant = {
     name: string;
     value: string;
   }[];
+  image: Image | null;
   price: Money;
   compareAtPrice: Money | null;
 };

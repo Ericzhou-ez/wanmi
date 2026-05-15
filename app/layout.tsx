@@ -5,9 +5,11 @@ import { getCart } from "lib/shopify";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
 import "./globals.css";
+import "../styles/cart-modal.css";
+import "../styles/product-page.css";
 import { baseUrl } from "lib/utils";
 import { Lora } from "next/font/google";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 
 const { SITE_NAME } = process.env;
 
@@ -17,11 +19,11 @@ const lora = Lora({
   display: "swap",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-  weight: ["400", "500", "700"],
+const roboto = Roboto({
+   subsets: ["latin"],
+   variable: "--font-roboto",
+   display: "swap",
+   weight: ["400", "500", "700"],
 });
 
 export const metadata = {
@@ -50,18 +52,18 @@ export default async function RootLayout({
   const cart = getCart();
 
   return (
-     <html lang="fr" className={`${lora.variable} ${inter.variable}`}>
-        <body className="bg-white text-neutral-900">
-           <CartProvider cartPromise={cart}>
-              <WishlistProvider>
-                 <Navbar />
-                 <main>
-                    {children}
-                    <Toaster closeButton />
-                 </main>
-              </WishlistProvider>
-           </CartProvider>
-        </body>
-     </html>
+    <html lang="fr" className={`${lora.variable} ${roboto.variable}`}>
+      <body className="bg-white text-neutral-900">
+        <CartProvider cartPromise={cart}>
+          <WishlistProvider>
+            <Navbar />
+            <main>
+              {children}
+              <Toaster closeButton />
+            </main>
+          </WishlistProvider>
+        </CartProvider>
+      </body>
+    </html>
   );
 }

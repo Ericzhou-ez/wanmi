@@ -3,9 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { getAccountContext } from "lib/account";
-import {
-  createReturnRequest,
-} from "lib/shopify/admin/returns";
+import { createReturnRequest } from "lib/shopify/admin/returns";
 import { getCustomerOrderById } from "lib/shopify/admin/orders";
 import type { SubmitReturnState } from "types/account";
 import type { CreateReturnInput } from "types/shopify-admin";

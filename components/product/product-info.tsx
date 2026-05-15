@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Price from "components/price";
 import { addItem } from "components/cart/actions";
 import { useCart } from "components/cart/cart-context";
@@ -13,6 +12,7 @@ import type { Product, ProductVariant } from "lib/shopify/types";
 import type { ParsedDescription } from "types/product";
 import { cn } from "lib/utils";
 import { useActionState } from "react";
+import { useSelectedProductVariant } from "./use-selected-variant";
 
 function ProductPrice({
   variant,
@@ -32,15 +32,13 @@ function ProductPrice({
       <Price
         amount={price.amount}
         currencyCode={price.currencyCode}
-        className="text-2xl font-semibold text-neutral-900"
-        currencyCodeClassName="hidden"
+        className="text-2xl text-neutral-700 font-semibold"
       />
       {hasDiscount && (
         <Price
           amount={compareAtPrice.amount}
           currencyCode={compareAtPrice.currencyCode}
           className="text-lg text-neutral-400 line-through"
-          currencyCodeClassName="hidden"
         />
       )}
     </div>
@@ -55,23 +53,17 @@ export function ProductInfo({
   parsedDescription: ParsedDescription;
 }) {
   const { addCartItem } = useCart();
-  const searchParams = useSearchParams();
   const [quantity, setQuantity] = useState(1);
   const [, formAction] = useActionState(addItem, null);
 
-  const variant = product.variants.find((v: ProductVariant) =>
-    v.selectedOptions.every(
-      (option) => option.value === searchParams.get(option.name.toLowerCase()),
-    ),
-  );
-  const defaultVariantId =
-    product.variants.length === 1 ? product.variants[0]?.id : undefined;
-  const selectedVariantId = variant?.id || defaultVariantId;
-  const finalVariant = product.variants.find(
-    (v) => v.id === selectedVariantId,
-  );
+  const { selectedOptions, selectedVariant: finalVariant } =
+    useSelectedProductVariant(product);
+  const selectedVariantId = finalVariant?.id;
 
-  const addItemAction = formAction.bind(null, finalVariant?.id);
+  const addItemAction = formAction.bind(null, {
+    selectedVariantId,
+    quantity,
+  });
 
   const handleAddToCart = async () => {
     if (!finalVariant) return;
@@ -84,7 +76,7 @@ export function ProductInfo({
   return (
     <div>
       <div className="flex items-start justify-between gap-4">
-        <h1 className="font-lora text-2xl font-medium leading-tight text-neutral-900 lg:text-3xl">
+        <h1 className="font-lora text-3xl font-semibold leading-tight text-neutral-900 lg:text-3xl">
           {product.title}
         </h1>
         <SaveButton product={product} iconOnly />
@@ -94,15 +86,15 @@ export function ProductInfo({
         <ProductPrice variant={finalVariant} product={product} />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-12">
         <VariantSelector
           options={product.options}
           variants={product.variants}
+          selectedOptions={selectedOptions}
         />
       </div>
 
-      <div className="mt-6">
-        <p className="mb-2 text-sm font-medium text-neutral-700">Quantité</p>
+      <div className="mt-12">
         <div className="flex items-center gap-4">
           <QuantitySelector
             quantity={quantity}
@@ -127,8 +119,8 @@ export function ProductInfo({
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3 border-t border-neutral-200 pt-6">
-        <div className="flex items-center gap-2 text-sm text-neutral-600">
+      <div className="pt-12 flex flex-col gap-3">
+        {/* <div className="flex items-center gap-2 text-sm text-neutral-600">
           <svg
             className="h-4 w-4"
             fill="none"
@@ -143,7 +135,7 @@ export function ProductInfo({
             />
           </svg>
           <span>Livraison gratuite</span>
-        </div>
+        </div> */}
         <div className="flex items-center gap-2 text-sm text-neutral-600">
           <svg
             className="h-4 w-4"

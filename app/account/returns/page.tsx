@@ -1,8 +1,6 @@
 import Link from "next/link";
 
-import {
-  ReturnRequestForm,
-} from "components/account/return-request-form";
+import { ReturnRequestForm } from "components/account/return-request-form";
 import { getAccountContext } from "lib/account";
 import { getCustomerOrders } from "lib/shopify/admin/orders";
 import { RETURN_REASONS } from "lib/shopify/admin/returns";

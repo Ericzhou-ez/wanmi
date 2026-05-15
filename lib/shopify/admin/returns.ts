@@ -2,13 +2,12 @@ import "server-only";
 
 import { shopifyAdminFetch } from "../admin";
 import { returnRequestMutation } from "../mutations/return";
+import type { ShopifyReturnRequestOperation } from "../types";
+import type { ReturnReasonOption } from "types/account";
 import type {
-  ShopifyReturnRequestOperation,
-} from "../types";
-import type {
-  ReturnReasonOption,
-} from "types/account";
-import type { CreateReturnInput, CreateReturnResult } from "types/shopify-admin";
+  CreateReturnInput,
+  CreateReturnResult,
+} from "types/shopify-admin";
 
 export async function createReturnRequest(
   input: CreateReturnInput,

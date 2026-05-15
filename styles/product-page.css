@@ -1,0 +1,71 @@
+/*
+ * Safari can be stricter about generated responsive utilities in flex/aspect-ratio
+ * layouts. These page-specific fallbacks use classic media queries so the product
+ * page keeps the same desktop structure as Chromium.
+ */
+[data-product-shell],
+[data-product-sticky-inner] {
+   max-width: 1536px;
+}
+
+@media (min-width: 1024px) {
+   [data-product-shell],
+   [data-product-sticky-inner] {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+   }
+
+   [data-product-hero] {
+      flex-direction: row;
+      gap: 2.5rem;
+      padding-top: 2.5rem;
+      padding-bottom: 2.5rem;
+   }
+
+   [data-product-gallery-column] {
+      width: 55%;
+   }
+
+   [data-product-info-column] {
+      margin-top: 0;
+      width: 45%;
+   }
+
+   [data-product-gallery] {
+      display: flex;
+      gap: 0.75rem;
+      height: 100%;
+   }
+
+   [data-product-gallery-desktop-thumbs] {
+      display: flex;
+      width: 72px;
+      flex: none;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow-y: auto;
+   }
+
+   [data-product-gallery-mobile-thumbs] {
+      display: none;
+   }
+}
+
+@media (min-width: 1280px) {
+   [data-product-gallery-column] {
+      width: 58%;
+   }
+
+   [data-product-info-column] {
+      width: 42%;
+   }
+}
+
+.product-carousel-btns {
+   right: 0 !important;
+   bottom: 0.8rem !important;
+   left: 0 !important;
+   justify-content: center !important;
+   gap: 20px !important;
+   margin: 0 auto;
+}

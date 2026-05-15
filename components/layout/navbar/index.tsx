@@ -19,7 +19,7 @@ export async function Navbar() {
   return (
     <nav
       data-site-navbar
-      className="sticky top-0 z-50 translate-y-0 border-b border-neutral-200 bg-white px-4 pt-0 pb-2 transition-transform duration-300 ease-out will-change-transform data-[nav-hidden=true]:-translate-y-full lg:px-6"
+      className="sticky top-0 z-50 translate-y-0 border-b border-neutral-200 bg-white px-4 py-2 transition-transform duration-300 ease-out will-change-transform data-[nav-hidden=true]:-translate-y-full lg:px-6"
     >
       <NavbarMetrics />
       <PromoStrip />

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getAccountContext } from "lib/account";
+import { formatPrice } from "lib/format-price";
 import { getCustomerOrders } from "lib/shopify/admin/orders";
 
 export const metadata = {
@@ -14,19 +15,6 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   month: "long",
   year: "numeric",
 });
-
-const money = (amount: string, currencyCode: string) => {
-  const value = Number(amount);
-  if (Number.isNaN(value)) return `${amount} ${currencyCode}`;
-  try {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: currencyCode || "EUR",
-    }).format(value);
-  } catch {
-    return `${value.toFixed(2)} ${currencyCode}`;
-  }
-};
 
 export default async function OrdersPage() {
   const account = await getAccountContext();
@@ -89,7 +77,7 @@ export default async function OrdersPage() {
             </div>
             <div className="text-right">
               <p className="text-base font-semibold text-neutral-900">
-                {money(
+                {formatPrice(
                   order.currentTotalPriceSet.shopMoney.amount,
                   order.currentTotalPriceSet.shopMoney.currencyCode,
                 )}

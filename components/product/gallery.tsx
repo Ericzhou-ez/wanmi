@@ -17,7 +17,10 @@ export function Gallery({
     ? Math.trunc(rawImageIndex)
     : 0;
   const imageIndex = Number.isFinite(normalizedImageIndex)
-    ? Math.min(Math.max(normalizedImageIndex, 0), Math.max(images.length - 1, 0))
+    ? Math.min(
+        Math.max(normalizedImageIndex, 0),
+        Math.max(images.length - 1, 0),
+      )
     : 0;
 
   const updateImage = (index: string) => {

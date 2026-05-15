@@ -2,7 +2,7 @@ export default function WordLogo({ isDark }: { isDark: boolean }) {
   return (
     <span>
       <p
-        className={`inline font-bold text-2xl tracking-normal ${isDark ? "text-black" : "text-white"}`}
+        className={`inline font-black text-2xl tracking-normal ${isDark ? "text-black" : "text-white"}`}
       >
         WANMI
       </p>

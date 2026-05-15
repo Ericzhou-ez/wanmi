@@ -24,7 +24,9 @@ export default async function SearchPage(props: {
 
   return (
     <>
-      <h1 className="mb-4 text-2xl font-semibold text-neutral-900">Recherche</h1>
+      <h1 className="mb-4 text-2xl font-semibold text-neutral-900">
+        Recherche
+      </h1>
       {!searchValue ? (
         <p className="mb-4 text-sm text-neutral-600">
           Entrez un mot-clé pour découvrir nos produits.

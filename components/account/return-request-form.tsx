@@ -2,9 +2,7 @@
 
 import { useActionState } from "react";
 
-import {
-  submitReturnRequest,
-} from "app/account/returns/actions";
+import { submitReturnRequest } from "app/account/returns/actions";
 import type {
   ReturnReasonOption,
   ReturnableLine,

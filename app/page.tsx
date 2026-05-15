@@ -115,20 +115,20 @@ export default async function HomePage() {
   );
   const productsByHandle: Record<string, HomeHeroProduct | undefined> =
     Object.fromEntries(
-    heroProducts.map(([handle, p]) => [
-      handle,
-      p
-        ? {
-            handle: p.handle,
-            title: p.title,
-            imageUrl: p.featuredImage?.url,
-            imageAlt: p.featuredImage?.altText ?? p.title,
-            priceAmount: p.priceRange?.minVariantPrice?.amount,
-            priceCurrency: p.priceRange?.minVariantPrice?.currencyCode,
-          }
-        : undefined,
-    ]),
-  );
+      heroProducts.map(([handle, p]) => [
+        handle,
+        p
+          ? {
+              handle: p.handle,
+              title: p.title,
+              imageUrl: p.featuredImage?.url,
+              imageAlt: p.featuredImage?.altText ?? p.title,
+              priceAmount: p.priceRange?.minVariantPrice?.amount,
+              priceCurrency: p.priceRange?.minVariantPrice?.currencyCode,
+            }
+          : undefined,
+      ]),
+    );
 
   return (
     <>

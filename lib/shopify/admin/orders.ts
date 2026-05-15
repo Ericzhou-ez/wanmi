@@ -1,9 +1,13 @@
 import "server-only";
 
 import { shopifyAdminFetch } from "../admin";
-import { getCustomerOrdersQuery } from "../queries/customer";
+import {
+  getCustomerOrdersBySearchQuery,
+  getCustomerOrdersQuery,
+} from "../queries/customer";
 import type {
   Connection,
+  ShopifyCustomerOrdersBySearchOperation,
   ShopifyCustomerOrdersOperation,
   ShopifyOrder,
   ShopifyReturnableFulfillment,
@@ -13,6 +17,23 @@ import type { CustomerOrder, CustomerReturnable } from "types/shopify-admin";
 
 const removeEdges = <T>(connection: Connection<T>): T[] =>
   connection.edges.map((edge) => edge.node);
+
+function quoteSearchValue(value: string): string {
+  return `'${value.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
+}
+
+function legacyCustomerIdFromGid(customerId: string): string | null {
+  return customerId.match(/\/Customer\/(\d+)$/)?.[1] ?? null;
+}
+
+function uniqueOrders(orders: CustomerOrder[]): CustomerOrder[] {
+  const seen = new Set<string>();
+  return orders.filter((order) => {
+    if (seen.has(order.id)) return false;
+    seen.add(order.id);
+    return true;
+  });
+}
 
 function reshapeReturnable(
   fulfillment: ShopifyReturnableFulfillment,
@@ -54,6 +75,47 @@ export async function getCustomerOrders(
 
   if (!data.customer) return [];
   return removeEdges(data.customer.orders).map(reshapeOrder);
+}
+
+export async function getCustomerOrdersByIdentity(
+  {
+    customerId,
+    email,
+  }: {
+    customerId: string;
+    email: string;
+  },
+  options?: { first?: number },
+): Promise<CustomerOrder[]> {
+  const first = options?.first ?? 20;
+  const searchParts: string[] = [];
+  const legacyCustomerId = legacyCustomerIdFromGid(customerId);
+
+  if (legacyCustomerId) {
+    searchParts.push(`customer_id:${legacyCustomerId}`);
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  if (normalizedEmail) {
+    searchParts.push(`email:${quoteSearchValue(normalizedEmail)}`);
+  }
+
+  if (searchParts.length === 0) return [];
+
+  const data = await shopifyAdminFetch<
+    ShopifyCustomerOrdersBySearchOperation["data"],
+    ShopifyCustomerOrdersBySearchOperation["variables"]
+  >({
+    query: getCustomerOrdersBySearchQuery,
+    variables: { query: searchParts.join(" OR "), first },
+  });
+
+  const searchedOrders = uniqueOrders(
+    removeEdges(data.orders).map(reshapeOrder),
+  );
+  if (searchedOrders.length > 0) return searchedOrders;
+
+  return getCustomerOrders(customerId, { first });
 }
 
 export async function getCustomerOrderById(

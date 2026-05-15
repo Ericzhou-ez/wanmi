@@ -397,6 +397,16 @@ export type ShopifyCustomerOrdersOperation = {
   };
 };
 
+export type ShopifyCustomerOrdersBySearchOperation = {
+  data: {
+    orders: Connection<ShopifyOrder>;
+  };
+  variables: {
+    query: string;
+    first?: number;
+  };
+};
+
 export type ShopifyReturnRequestLineItem = {
   fulfillmentLineItemId: string;
   quantity: number;

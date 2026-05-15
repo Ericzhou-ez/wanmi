@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { getAccountContext } from "lib/account";
 import { formatPrice } from "lib/format-price";
-import { getCustomerOrders } from "lib/shopify/admin/orders";
+import { getCustomerOrdersByIdentity } from "lib/shopify/admin/orders";
 
 export const metadata = {
   title: "Mes commandes",
@@ -44,9 +44,13 @@ export default async function OrdersPage() {
     );
   }
 
-  const orders = await getCustomerOrders(account.shopifyCustomerId, {
-    first: 30,
-  });
+  const orders = await getCustomerOrdersByIdentity(
+    {
+      customerId: account.shopifyCustomerId,
+      email: account.email,
+    },
+    { first: 30 },
+  );
 
   if (orders.length === 0) {
     return (

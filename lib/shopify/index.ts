@@ -84,11 +84,15 @@ const logRecoverableShopifyFailure = (
 };
 
 export async function shopifyFetch<T>({
+  cache,
   headers,
+  next,
   query,
   variables,
 }: {
+  cache?: RequestCache;
   headers?: HeadersInit;
+  next?: { revalidate?: number | false; tags?: string[] };
   query: string;
   variables?: ExtractVariables<T>;
 }): Promise<{ status: number; body: T } | never> {
@@ -108,6 +112,8 @@ export async function shopifyFetch<T>({
         ...(query && { query }),
         ...(variables && { variables }),
       }),
+      ...(cache ? { cache } : {}),
+      ...(next ? { next } : {}),
     });
 
     const responseText = await result.text();

@@ -100,3 +100,58 @@ export const getCustomerOrdersQuery = /* GraphQL */ `
     }
   }
 `;
+
+export const getStorefrontCustomerOrdersByCustomerIdQuery = /* GraphQL */ `
+  query getStorefrontCustomerOrdersByCustomerId(
+    $customerId: ID!
+    $first: Int = 20
+  ) {
+    node(id: $customerId) {
+      ... on Customer {
+        id
+        email
+        orders(first: $first, sortKey: PROCESSED_AT, reverse: true) {
+          edges {
+            node {
+              id
+              name
+              processedAt
+              financialStatus
+              fulfillmentStatus
+              currentTotalPrice {
+                amount
+                currencyCode
+              }
+              lineItems(first: 50) {
+                edges {
+                  node {
+                    title
+                    quantity
+                    variant {
+                      id
+                      title
+                      image {
+                        url
+                        altText
+                        width
+                        height
+                      }
+                      product {
+                        id
+                        handle
+                        title
+                        tags
+                        productType
+                        vendor
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;

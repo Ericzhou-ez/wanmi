@@ -1,7 +1,7 @@
 import { GridTileImage } from "components/grid/tile";
 import { getAccountContext } from "lib/account";
 import { buildRecommendations } from "lib/recommendations";
-import { getStorefrontCustomerOrders } from "lib/shopify/customer-orders";
+import { getCustomerOrdersByIdentity } from "lib/shopify/admin/orders";
 import Link from "next/link";
 
 export const metadata = {
@@ -29,9 +29,13 @@ export default async function RecommendationsPage() {
     );
   }
 
-  const orders = await getStorefrontCustomerOrders(account.shopifyCustomerId, {
-    first: 20,
-  });
+  const orders = await getCustomerOrdersByIdentity(
+    {
+      customerId: account.shopifyCustomerId,
+      email: account.email,
+    },
+    { first: 20 },
+  );
   const products = await buildRecommendations(orders, { limit: 12 });
 
   if (products.length === 0) {

@@ -101,52 +101,77 @@ export const getCustomerOrdersQuery = /* GraphQL */ `
   }
 `;
 
-export const getStorefrontCustomerOrdersByCustomerIdQuery = /* GraphQL */ `
-  query getStorefrontCustomerOrdersByCustomerId(
-    $customerId: ID!
-    $first: Int = 20
-  ) {
-    node(id: $customerId) {
-      ... on Customer {
-        id
-        email
-        orders(first: $first, sortKey: PROCESSED_AT, reverse: true) {
-          edges {
-            node {
-              id
-              name
-              processedAt
-              financialStatus
-              fulfillmentStatus
-              currentTotalPrice {
-                amount
-                currencyCode
-              }
-              lineItems(first: 50) {
-                edges {
-                  node {
+export const getCustomerOrdersBySearchQuery = /* GraphQL */ `
+  query getCustomerOrdersBySearch($query: String!, $first: Int = 20) {
+    orders(first: $first, query: $query, sortKey: PROCESSED_AT, reverse: true) {
+      edges {
+        node {
+          id
+          name
+          processedAt
+          displayFinancialStatus
+          displayFulfillmentStatus
+          currentTotalPriceSet {
+            shopMoney {
+              amount
+              currencyCode
+            }
+          }
+          lineItems(first: 50) {
+            edges {
+              node {
+                id
+                title
+                quantity
+                variant {
+                  id
+                  title
+                  image {
+                    url
+                    altText
+                    width
+                    height
+                  }
+                  product {
+                    id
+                    handle
                     title
-                    quantity
-                    variant {
-                      id
-                      title
-                      image {
-                        url
-                        altText
-                        width
-                        height
-                      }
-                      product {
+                    tags
+                    productType
+                    vendor
+                  }
+                }
+              }
+            }
+          }
+          returnableFulfillments(first: 10) {
+            edges {
+              node {
+                id
+                returnableFulfillmentLineItems(first: 50) {
+                  edges {
+                    node {
+                      quantity
+                      fulfillmentLineItem {
                         id
-                        handle
-                        title
-                        tags
-                        productType
-                        vendor
+                        lineItem {
+                          id
+                          title
+                          quantity
+                        }
                       }
                     }
                   }
                 }
+              }
+            }
+          }
+          returns(first: 10) {
+            edges {
+              node {
+                id
+                name
+                status
               }
             }
           }

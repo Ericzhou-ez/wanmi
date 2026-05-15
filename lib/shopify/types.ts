@@ -397,44 +397,12 @@ export type ShopifyCustomerOrdersOperation = {
   };
 };
 
-export type ShopifyStorefrontOrderLineItem = {
-  title: string;
-  quantity: number;
-  variant: {
-    id: string;
-    title: string | null;
-    image: Image | null;
-    product: {
-      id: string;
-      handle: string;
-      title: string;
-      tags: string[];
-      productType: string | null;
-      vendor: string | null;
-    } | null;
-  } | null;
-};
-
-export type ShopifyStorefrontCustomerOrder = {
-  id: string;
-  name: string;
-  processedAt: string;
-  financialStatus: string | null;
-  fulfillmentStatus: string | null;
-  currentTotalPrice: ShopifyOrderMoney;
-  lineItems: Connection<ShopifyStorefrontOrderLineItem>;
-};
-
-export type ShopifyStorefrontCustomerOrdersOperation = {
+export type ShopifyCustomerOrdersBySearchOperation = {
   data: {
-    node:
-      | (Pick<ShopifyCustomer, "id" | "email"> & {
-          orders: Connection<ShopifyStorefrontCustomerOrder>;
-        })
-      | null;
+    orders: Connection<ShopifyOrder>;
   };
   variables: {
-    customerId: string;
+    query: string;
     first?: number;
   };
 };

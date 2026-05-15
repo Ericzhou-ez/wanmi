@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { getAccountContext } from "lib/account";
-import { getStorefrontCustomerOrders } from "lib/shopify/customer-orders";
+import { getCustomerOrdersByIdentity } from "lib/shopify/admin/orders";
 
 export const metadata = {
   title: "Mon compte",
@@ -24,8 +24,11 @@ export default async function AccountOverviewPage() {
 
   if (account.shopifyCustomerId && account.adminConfigured) {
     try {
-      const orders = await getStorefrontCustomerOrders(
-        account.shopifyCustomerId,
+      const orders = await getCustomerOrdersByIdentity(
+        {
+          customerId: account.shopifyCustomerId,
+          email: account.email,
+        },
         {
           first: 10,
         },
